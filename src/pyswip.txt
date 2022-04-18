@@ -1,0 +1,32 @@
+prolog cheat sheet:https://www.newthinktank.com/2015/08/learn-prolog-one-video/
+
+
+1. query with pyswip(variable):
+
+	e.g. 
+		father(ben,dick). //knowledge base in agent.pl
+		c = list(prolog.query("father(What,dick)")) //query in python
+
+	* The returned data c is a dictionary: c = [{'What':'dick'}]
+
+2. query with pyswip(True/Flase):
+
+	e.g. 
+		father(ben,dick). //knowledge base in agent.pl
+		c = bool(list(prolog.query("father(ben,dick)"))) //query in python
+
+	* The returned data c is a boolean: c = True
+
+3. asserta/z with pyswip:
+
+	e.g. 
+		:- dynamic(father/2). // declare as dynamic first
+		prolog.asserta("father(ben,dick)")
+
+4. retract with pyswip:
+
+	e.g. 
+		:- dynamic(father/2). // declare as dynamic first
+		prolog.retract("father(ben,dick)") //specific
+		prolog.retractall("father(_,_)") //all
+	
