@@ -6,8 +6,10 @@ prolog cheat sheet:https://www.newthinktank.com/2015/08/learn-prolog-one-video/
 	e.g. 
 		father(ben,dick). //knowledge base in agent.pl
 		c = list(prolog.query("father(What,dick)")) //query in python
+		loc = list(prolog.query("current(X,Y,Z)"))
+		print(loc)
 
-	* The returned data c is a dictionary: c = [{'What':'dick'}]
+	* The returned data c is a dictionary: c = [{'What':'ben'}]
 
 2. query with pyswip(True/Flase):
 
