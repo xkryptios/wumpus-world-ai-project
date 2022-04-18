@@ -52,5 +52,22 @@ class Agent:
 if __name__ == "__main__":
     # create a grid
     g = Grid(6, 6)
-    agent = Agent()
     g.display_grid()
+    cmd = ['l','r','f']
+    # agent = Agent()
+    while True:
+        s = input("enter command: Left=l, Right=r, Forward=f ")
+        if s not in cmd:
+            continue
+
+        if s == 'l':
+            slist = g.agent_rotate_left()
+        elif s == 'r':
+            slist = g.agent_rotate_right()
+        else:
+            slist = g.agent_move_forward()
+
+        g.display_grid()
+        print("confou,stench,tingle,glitte,bumppp,scream")
+        print(slist)
+
