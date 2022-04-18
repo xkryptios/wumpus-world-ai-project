@@ -1,11 +1,12 @@
 from gridcell import GridCell, Direction
 from enum import Enum
+import random
 
 
 class Grid:
     def __init__(self, x, y):
         # check for grid size to be >=6
-        self.agent_location = (1, 1)
+        # self.agent_location = (1, 1)
         self.x = x
         self.y = y
         if x < 6 or y < 6:
@@ -18,7 +19,7 @@ class Grid:
         for i in range(self.y):
             temp = []  # array of cell
             for j in range(self.x):
-                temp.append(GridCell())
+                temp.append(GridCell(j, i))
             self.grid.append(temp)
 
         # set the border cells to walls
@@ -27,7 +28,7 @@ class Grid:
                 if i == 0 or j == 0 or i == self.y - 1 or j == self.x - 1:
                     # print(type(self.grid[i][j]))
                     self.grid[i][j].set_wall()
-        self.agent_current_cell = self.grid[self.agent_location[1]][self.agent_location[0]]
+        self.agent_current_cell = None
         self.initialise_npcs()
 
     def display_grid(self):
@@ -56,7 +57,7 @@ class Grid:
         # need to set >= 1 portal
         self.set_portal_location(4, 2)
 
-        self.spawn_agent()
+        # self.spawn_agent()
 
     def set_wumpus_location(self, x, y):
         self.grid[y][x].place_wumpus()
@@ -79,10 +80,17 @@ class Grid:
         self.grid[y][x + 1].set_glitter()
         self.grid[y][x - 1].set_glitter()
 
-    def spawn_agent(self):
+    def spawn_agent(self) -> list:
         # agent is spawned at grid(1,1)
-        self.grid[1][1].set_agent(Direction.rnorth)
-        self.grid[1][1].set_visited()
+        if self.agent_current_cell != None:
+            self.agent_current_cell.delete_agent()
+
+        self.agent_current_cell = self.grid[1][1]
+        self.agent_current_cell.set_agent(Direction.rnorth)
+        self.agent_current_cell.set_visited()
+        sensory_list = self.agent_current_cell.get_sensory_list()
+        sensory_list[0] = True
+        return sensory_list
 
     # start of agent movement functions for grid to keep track of agent
     def agent_rotate_left(self) -> list:
@@ -119,24 +127,33 @@ class Grid:
         # if yes, return current cell senry with a bump
         # if no, set the location of agent in the grid to new cell, then return sensory of the new cell
         d = self.agent_current_cell.get_agent_direction()
+        x = self.agent_current_cell.get_cell_position()[0]
+        y = self.agent_current_cell.get_cell_position()[1]
         if d == Direction.rnorth:
-            new_position = (self.agent_location[0], self.agent_location[1] + 1)
+            new_position = (x, y + 1)
         elif d == Direction.rsouth:
-            new_position = (self.agent_location[0], self.agent_location[1] - 1)
+            new_position = (x, y - 1)
         elif d == Direction.reast:
-            new_position = (self.agent_location[0] + 1, self.agent_location[1])
+            new_position = (x + 1, y)
         else:
-            new_position = (self.agent_location[0] - 1, self.agent_location[1])
-        print('newlocation',new_position)
+            new_position = (x - 1, y)
 
+        # check if is wall
         if self.grid[new_position[1]][new_position[0]].is_wall():
             sensory_list = self.agent_current_cell.get_sensory_list()
             sensory_list[4] = True
             return sensory_list
 
+        # check if wumpus
+        elif self.grid[new_position[1]][new_position[0]].is_wumpus():
+            return self.reset_game()
+
+        # check if is portal
+        elif self.grid[new_position[1]][new_position[0]].is_portal():
+            return self.teleport()
+
         # if the next node is not wall, set the new location, set new the new cell
         self.agent_current_cell.delete_agent()
-        self.agent_location = new_position
         self.agent_current_cell = self.grid[new_position[1]][new_position[0]]
         self.agent_current_cell.set_agent(d)
         self.agent_current_cell.set_visited()
@@ -145,6 +162,25 @@ class Grid:
 
     def agent_pickup(self) -> list:
         pass
+
+    def agent_shoot(self) -> list:
+        pass
+
+    def reset_game(self) -> list:
+        for i in range(self.y):
+            for j in range(self.x):
+                self.grid[i][j].set_unvisited()
+        return self.spawn_agent()
+
+    def teleport(self) -> list:
+        safe_location_list = [(1, 2), (2, 1), (3, 1)]
+        new_postition = random.choice(safe_location_list)
+        self.agent_current_cell.delete_agent()
+        self.agent_current_cell = self.grid[new_postition[1]][new_postition[0]]
+        self.agent_current_cell.set_agent(Direction.rnorth)
+        sensory = self.agent_current_cell.get_sensory_list()
+        sensory[0] = True
+        return sensory
 
 
 # noinspection SpellCheckingInspection

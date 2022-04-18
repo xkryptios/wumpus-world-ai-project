@@ -52,8 +52,10 @@ class Agent:
 if __name__ == "__main__":
     # create a grid
     g = Grid(6, 6)
+    sensory = g.spawn_agent()
     g.display_grid()
-    cmd = ['l','r','f']
+    print(sensory)
+    cmd = ['l', 'r', 'f']
     # agent = Agent()
     while True:
         s = input("enter command: Left=l, Right=r, Forward=f ")
@@ -70,4 +72,22 @@ if __name__ == "__main__":
         g.display_grid()
         print("confou,stench,tingle,glitte,bumppp,scream")
         print(slist)
+    # prolog = Prolog()
+    # prolog.consult("Agent.pl")
 
+    # # loc = list(prolog.query("reset"))
+
+    # loc = list(prolog.query("current(X,Y,Z)"))
+    # print(loc)
+
+    # prolog.query("move(moveforward, [False,False,False,False,False,False]).")
+
+    # loc = list(prolog.query("current(X,Y,Z)"))
+    # print(loc)
+
+    # prolog.query("move(turnleft, [False,False,False,False,False,False]).")
+    # loc = list(prolog.query("current(X,Y,Z)"))
+    # print(loc)
+
+    # move(moveforward, [_,_,_,_,_,_]).
+    # slist = [False, False, False, False, False, False]

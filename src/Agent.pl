@@ -88,5 +88,5 @@ turnright(reast) :- current(X,Y,Z),
 
 
 
-move(pickup, [C, S, T, G, B, SC]) :- G = on,
-                .
+%move(pickup, [C, S, T, G, B, SC]) :- G = on,
+%               .
