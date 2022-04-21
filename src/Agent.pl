@@ -1,11 +1,11 @@
 /*This is the Agent.pl file. It contains the knowledge available to the agent
 and the logical functions that the Driver can invoke to get Values, bBoolean, etc*/
-%consult: consult('C:/Users/user/Desktop/prolog/Agent.pl').
+%consult: consult('C:\Users\ryanc\Documents\GitHub\wumpus-world-ai-project\src\Agent.pl').
 
 %force reset
 reset :- retractall(current(_,_,_)).
 %consult
-consult :- consult('C:/Users/user/Desktop/prolog/Agent.pl').
+consult :- consult('C:\Users\ryanc\Documents\GitHub\wumpus-world-ai-project\src\Agent.pl').
 
 % Declaration of dynamic (editable) predicates, eg.:- dynamic(father/2)
 :- dynamic(current/3).
@@ -24,20 +24,34 @@ reborn() :- retractall(current(_,_,_)),
             asserta(hasarrow()).
 
 shoot() :- hasarrow,
+            write("shot fired"),
            retractall(hasarrow()).
 
 move(shoot, [C, S, T, G, B, SC]) :- shoot.
 
 % moveforward for rnorth
 
+move(moveforward , [C, S, T, G, B, SC]) :- write("i am moving forward "),
+                                            write("current"),
+                                            current(X,Y,Z),
+                                            write(X),
+                                            write(Y),
+                                            write(Z),
+                                            forward(Z).
 % need to add in check for wall
-move(moveforward, [C, S, T, G, B, SC]) :- current(X,Y,Z),
-                                          forward(Z).
+%move(moveforward, [C, S, T, G, B, SC]) :- current(X,Y,Z),
+ %                                         write("testing").
+  %                                        forward(Z).
 
-forward(rnorth) :- current(X,Y,Z),
+forward(rnorth) :-  write("\ni am now moving r north forward"),
+                    current(X,Y,Z),
                     G is Y+1,
                     retractall(current(_,_,_)),
-                    asserta(current(X,G,Z)).
+                    assertz(current(X,G,Z)),
+                    write(X),
+                    write(G),
+                    write(Z),
+                    put(10).
 
 forward(reast) :- current(X,Y,Z),
                     G is X+1,
@@ -89,4 +103,8 @@ turnright(reast) :- current(X,Y,Z),
 
 
 %move(pickup, [C, S, T, G, B, SC]) :- G = on,
-%               .
+% 
+do_list(N, L):- findall(Num, between(1, N, Num), L).
+
+list_pairs(List1, List2, Pairs) :- findall((D,J), (member(D, List1), member(J, List2)), Pairs),
+print(Pairs).

@@ -1,3 +1,4 @@
+import string
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
 
@@ -50,35 +51,47 @@ class Agent:
 
 
 if __name__ == "__main__":
-    # create a grid
-    g = Grid(6, 6)
-    sensory = g.spawn_agent()
-    g.display_grid()
-    print(sensory)
-    cmd = ['l', 'r', 'f']
-    # agent = Agent()
-    while True:
-        s = input("enter command: Left=l, Right=r, Forward=f ")
-        if s not in cmd:
-            continue
+    # # create a grid
+    # g = Grid(6, 6)
+    # sensory = g.spawn_agent()
+    # g.display_grid()
+    # print(sensory)
+    # cmd = ['l', 'r', 'f']
+    # # agent = Agent()
+    # while True:
+    #     s = input("enter command: Left=l, Right=r, Forward=f ")
+    #     if s not in cmd:
+    #         continue
 
-        if s == 'l':
-            slist = g.agent_rotate_left()
-        elif s == 'r':
-            slist = g.agent_rotate_right()
-        else:
-            slist = g.agent_move_forward()
+    #     if s == 'l':
+    #         slist = g.agent_rotate_left()
+    #     elif s == 'r':
+    #         slist = g.agent_rotate_right()
+    #     else:
+    #         slist = g.agent_move_forward()
 
-        g.display_grid()
-        print("confou,stench,tingle,glitte,bumppp,scream")
-        print(slist)
-    # prolog = Prolog()
-    # prolog.consult("Agent.pl")
+    #     g.display_grid()
+    #     print("confou,stench,tingle,glitte,bumppp,scream")
+    #     print(slist)
 
-    # # loc = list(prolog.query("reset"))
+    prolog = Prolog()
+    prolog.consult("Agent.pl")
 
-    # loc = list(prolog.query("current(X,Y,Z)"))
-    # print(loc)
+    loc = list(prolog.query("current(X,Y,Z)"))
+    print(loc)
+
+    loc2 = list(prolog.query("move(moveforward, [_,_,_,_,_,_])."))
+    print(loc2)
+
+    loc4 = list(prolog.query("current(X,Y,Z)"))
+    print(loc4)
+    loc5 = list(prolog.query("list_pairs([1,2], [a,b], F)"))
+    #print(loc5)
+    # loc7 = list(prolog.query("zip([1,2],[a,b],Z)."))
+    # print(loc7)
+
+    
+   
 
     # prolog.query("move(moveforward, [False,False,False,False,False,False]).")
 
