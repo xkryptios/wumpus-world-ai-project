@@ -1,93 +1,30 @@
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
-
-
-class Agent:
-    def __init__(self) -> None:
-        prolog = Prolog()
-        prolog.consult("Agent.pl")
-
-    def move(self, a, l) -> None:
-        # actions constant = {shoot, moveforward,turnleft,turnright,pickup}
-        pass
-
-    def reposition(self, l) -> None:
-        pass
-
-    def explore(self, l) -> bool:
-        # true if list contain sequence of actions that leads agent to a safe+unvisited location
-        # if no more safe+unvisited cell AND no coin in explored area => return to origin
-        pass
-
-    def current(self, x, y, d):
-        # is true if xy is the current relative position and d is current relative orientation of the agent
-        pass
-
-    def hasarrow(self):
-        pass
-
-    # localisation methods
-    def visited(self, x: int, y: int) -> bool:
-        pass
-
-    def wumpus(self, x: int, y: int) -> bool:
-        pass
-
-    def confundus(self, x: int, y: int) -> bool:
-        pass
-
-    def tingle(self, x: int, y: int) -> bool:
-        pass
-
-    def glitter(self, x: int, y: int) -> bool:
-        pass
-
-    def stench(self, x: int, y: int) -> bool:
-        pass
-
-    def safe(self, x: int, y: int) -> bool:
-        pass
-
+from agent import Agent
 
 if __name__ == "__main__":
-    # create a grid
+    # initialise agent and map
     g = Grid(6, 6)
-    sensory = g.spawn_agent()
+    agent = Agent(1)
+
+    # spawn agent on absolute map
+    g.spawn_agent()
+    # g.display_grid()
+    # print(sensory)
+
+    while g.explorable():
+        # ask grid to get a list of action
+        path = g.get_actions()
+
+        # if agent confirm the path is safe
+        if agent.explore(path):
+            for action in path:
+                sensory_list = g.move(action)  # get sensory from the grid map
+                # tell agent movement is made and update sensory
+                agent.move(action, sensory_list)
+        # check current place gt coin, if yes pickup
+        # if g.check_for_coin_in_current_cell():
+
+    # finish exploration
+    print("end of exploration")
     g.display_grid()
-    print(sensory)
-    cmd = ['l', 'r', 'f']
-    # agent = Agent()
-    while True:
-        s = input("enter command: Left=l, Right=r, Forward=f ")
-        if s not in cmd:
-            continue
-
-        if s == 'l':
-            slist = g.agent_rotate_left()
-        elif s == 'r':
-            slist = g.agent_rotate_right()
-        else:
-            slist = g.agent_move_forward()
-
-        g.display_grid()
-        print("confou,stench,tingle,glitte,bumppp,scream")
-        print(slist)
-    # prolog = Prolog()
-    # prolog.consult("Agent.pl")
-
-    # # loc = list(prolog.query("reset"))
-
-    # loc = list(prolog.query("current(X,Y,Z)"))
-    # print(loc)
-
-    # prolog.query("move(moveforward, [False,False,False,False,False,False]).")
-
-    # loc = list(prolog.query("current(X,Y,Z)"))
-    # print(loc)
-
-    # prolog.query("move(turnleft, [False,False,False,False,False,False]).")
-    # loc = list(prolog.query("current(X,Y,Z)"))
-    # print(loc)
-
-    # move(moveforward, [_,_,_,_,_,_]).
-    # slist = [False, False, False, False, False, False]

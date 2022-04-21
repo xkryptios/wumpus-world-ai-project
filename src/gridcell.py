@@ -1,12 +1,4 @@
-from enum import Enum
-
-
-# noinspection SpellCheckingInspection
-class Direction(Enum):
-    rnorth = 1
-    rsouth = 2
-    reast = 3
-    rwest = 4
+import string
 
 
 class GridCell:
@@ -32,13 +24,12 @@ class GridCell:
         # if none of boolean variable for symb 5 is true, print ?
         # self.wumpus_known_or_possible = False
         # self.confundus_known_or_possible = False
-        self.agent_direction = Direction.rnorth
+        self.agent_direction = 'rnorth'
         self.safe = False
         self.visited = False
 
         # our own boolean values
         self.wall = False
-        self.has_coin = False
         self.wumpus = False
         self.portal = False
 
@@ -72,17 +63,17 @@ class GridCell:
         elif self.portal:
             symb5 = 'O'
             symb4 = symb6 = '-'
-        elif self.has_coin:
+        elif self.glitter_indicator:
             symb5 = '$'
             symb4 = symb6 = '-'
         elif self.agent_indicator:
-            if self.agent_direction == Direction.rnorth:
+            if self.agent_direction == 'rnorth':
                 symb5 = '^'
-            elif self.agent_direction == Direction.rsouth:
+            elif self.agent_direction == 'rsouth':
                 symb5 = 'v'
-            elif self.agent_direction == Direction.reast:
+            elif self.agent_direction == 'reast':
                 symb5 = '>'
-            elif self.agent_direction == Direction.rwest:
+            elif self.agent_direction == 'rwest':
                 symb5 = '<'
             symb4 = symb6 = '-'
         elif not self.visited and self.safe:
@@ -112,21 +103,20 @@ class GridCell:
 
     def set_stench(self):
         self.stench_indicator = True
+    def delete_stench(self):
+        self.stench_indicator = False
 
     # def set_confounded(self):
     #     self.confounded_indicator = True
     def set_wall(self):
         self.wall = True
 
-    def set_agent(self, direction: Direction):
+    def set_agent(self, direction: string):
         self.agent_indicator = True
         self.agent_direction = direction
 
     def delete_agent(self):
         self.agent_indicator = False
-
-    def set_glitter(self):
-        self.glitter_indicator = True
 
     # def set_bump(self):
     #     self.bump_indicator = True
@@ -144,7 +134,7 @@ class GridCell:
         self.wumpus = True
 
     def place_coin(self):
-        self.has_coin = True
+        self.glitter_indicator = True
 
     def place_portal(self):
         self.portal = True
@@ -158,8 +148,17 @@ class GridCell:
     def is_wumpus(self) -> bool:
         return self.wumpus
 
+    def kill_wumpus(self):
+        self.wumpus = False
+
     def is_portal(self):
         return self.portal
+
+    def has_coin(self):
+        return self.glitter_indicator
+
+    def delete_coin(self):
+        self.glitter_indicator = False
 
     def get_sensory_list(self):
         sensory_list = [self.confounded_indicator, self.stench_indicator, self.tingle_indicator, self.glitter_indicator,

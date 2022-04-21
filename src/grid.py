@@ -1,6 +1,10 @@
-from gridcell import GridCell, Direction
-from enum import Enum
+# from agent import Agent
+from gridcell import GridCell
 import random
+SENSORY_CONSTANTS = ['confounded', 'stench',
+                     'tingle', 'glitter', 'bump', 'scream']
+ACTION_CONSTANTS = ['shoot', 'moveforward', 'turnleft', 'turnright', 'pickup']
+DIRECTION_CONSTANTS = ['rnorth', 'rsouth', 'reast', 'rwest']
 
 
 class Grid:
@@ -75,10 +79,6 @@ class Grid:
 
     def set_coin_location(self, x, y):
         self.grid[y][x].place_coin()
-        self.grid[y + 1][x].set_glitter()
-        self.grid[y - 1][x].set_glitter()
-        self.grid[y][x + 1].set_glitter()
-        self.grid[y][x - 1].set_glitter()
 
     def spawn_agent(self) -> list:
         # agent is spawned at grid(1,1)
@@ -86,7 +86,7 @@ class Grid:
             self.agent_current_cell.delete_agent()
 
         self.agent_current_cell = self.grid[1][1]
-        self.agent_current_cell.set_agent(Direction.rnorth)
+        self.agent_current_cell.set_agent('rnorth')
         self.agent_current_cell.set_visited()
         sensory_list = self.agent_current_cell.get_sensory_list()
         sensory_list[0] = True
@@ -95,14 +95,14 @@ class Grid:
     # start of agent movement functions for grid to keep track of agent
     def agent_rotate_left(self) -> list:
         direction = self.agent_current_cell.get_agent_direction()
-        if direction == Direction.rnorth:
-            self.agent_current_cell.set_agent(Direction.rwest)
-        elif direction == Direction.rwest:
-            self.agent_current_cell.set_agent(Direction.rsouth)
-        elif direction == Direction.rsouth:
-            self.agent_current_cell.set_agent(Direction.reast)
+        if direction == 'rnorth':
+            self.agent_current_cell.set_agent('rwest')
+        elif direction == 'rwest':
+            self.agent_current_cell.set_agent('rsouth')
+        elif direction == 'rsouth':
+            self.agent_current_cell.set_agent('reast')
         else:
-            self.agent_current_cell.set_agent(Direction.rnorth)
+            self.agent_current_cell.set_agent('rnorth')
         # list = {confounded,stench,tingle,glitter,bump,scream}
         return self.agent_current_cell.get_sensory_list()
 
@@ -110,14 +110,14 @@ class Grid:
 
     def agent_rotate_right(self) -> list:
         direction = self.agent_current_cell.get_agent_direction()
-        if direction == Direction.rnorth:
-            self.agent_current_cell.set_agent(Direction.reast)
-        elif direction == Direction.reast:
-            self.agent_current_cell.set_agent(Direction.rsouth)
-        elif direction == Direction.rsouth:
-            self.agent_current_cell.set_agent(Direction.rwest)
+        if direction == 'rnorth':
+            self.agent_current_cell.set_agent('reast')
+        elif direction == 'reast':
+            self.agent_current_cell.set_agent('rsouth')
+        elif direction == 'rsouth':
+            self.agent_current_cell.set_agent('rwest')
         else:
-            self.agent_current_cell.set_agent(Direction.rnorth)
+            self.agent_current_cell.set_agent('rnorth')
 
         # list = {confounded,stench,tingle,glitter,bump,scream}
         return self.agent_current_cell.get_sensory_list()
@@ -129,11 +129,11 @@ class Grid:
         d = self.agent_current_cell.get_agent_direction()
         x = self.agent_current_cell.get_cell_position()[0]
         y = self.agent_current_cell.get_cell_position()[1]
-        if d == Direction.rnorth:
+        if d == 'rnorth':
             new_position = (x, y + 1)
-        elif d == Direction.rsouth:
+        elif d == 'rsouth':
             new_position = (x, y - 1)
-        elif d == Direction.reast:
+        elif d == 'reast':
             new_position = (x + 1, y)
         else:
             new_position = (x - 1, y)
@@ -152,6 +152,10 @@ class Grid:
         elif self.grid[new_position[1]][new_position[0]].is_portal():
             return self.teleport()
 
+        # if agent land on a location with coin, coin will be take automatically
+        # elif self.grid[new_position[1]][new_position[0]].has_coin():
+            # self.grid[new_position[1]][new_position[0]].delete_coin()
+
         # if the next node is not wall, set the new location, set new the new cell
         self.agent_current_cell.delete_agent()
         self.agent_current_cell = self.grid[new_position[1]][new_position[0]]
@@ -161,10 +165,35 @@ class Grid:
         return self.agent_current_cell.get_sensory_list()
 
     def agent_pickup(self) -> list:
-        pass
+        if not self.agent_current_cell.has_coin():
+            print("There is no coin in this location!")
+        else:
+            self.agent_current_cell.delete_coin()
+        return self.agent_current_cell.get_sensory_list()
 
     def agent_shoot(self) -> list:
-        pass
+        # need to check the direction
+        direction = self.agent_current_cell.get_agent_direction()
+        position = self.agent_current_cell.get_cell_position()
+
+        # locate target pixel
+        if direction == 'rnorth':
+            target_position = (position[0], position[1]+1)
+
+        elif direction == 'rsouth':
+            target_position = (position[0], position[1]-1)
+        elif direction == 'reast':
+            target_position = (position[0]+1, position[1])
+        elif direction == 'rwest':
+            target_position = (position[0]-1, position[1])
+        else:
+            raise ValueError("invalid direction!")
+
+        sensory_list = self.agent_current_cell.get_sensory_list()
+        if self.grid[target_position[1]][target_position[0]].is_wumpus():
+            self.grid[target_position[1]][target_position[0]].kill_wumpus()
+            sensory_list[5] = True
+        return sensory_list
 
     def reset_game(self) -> list:
         for i in range(self.y):
@@ -177,21 +206,69 @@ class Grid:
         new_postition = random.choice(safe_location_list)
         self.agent_current_cell.delete_agent()
         self.agent_current_cell = self.grid[new_postition[1]][new_postition[0]]
-        self.agent_current_cell.set_agent(Direction.rnorth)
+        self.agent_current_cell.set_agent('rnorth')
         sensory = self.agent_current_cell.get_sensory_list()
         sensory[0] = True
         return sensory
 
+    def move(self, action):
+        if action == 'shoot':
+            return self.agent_shoot()
+        if action == 'moveforward':
+            return self.agent_move_forward()
+        if action == 'turnleft':
+            return self.agent_rotate_left()
+        if action == 'turnright':
+            return self.agent_rotate_right()
+        if action == 'pickup':
+            return self.agent_pickup()
 
-# noinspection SpellCheckingInspection
-class Action(Enum):
-    shoot = 1
-    moveforward = 2
-    turnleft = 3
-    turnright = 4
-    pickup = 5
+    def explorable(self) -> bool:
+        pass
+    # def explorable(self) -> bool:
+    #     # check if theres any more safe tiles to explore
+    #     # can implement on the
+    #     # return
+    #     pass
+
+    def get_path(self, p1: tuple, q: tuple) -> list:
+        pass
+        # if current cell has coin, issue pickup as a command by itself!!!!
+        # else should plan a path from current cell to next safe cell
+
+    # remove wumpus and sensories when killed
+    def map_update_on_wumpus_kill(self):
+        for i in range(self.x):
+            for j in range(self.y):
+                self.grid[i][j].delete_stench()
+
+    def check_for_coin_in_current_cell(self):
+        return self.agent_current_cell.has_coin()
 
 
 if __name__ == "__main__":
     g = Grid(6, 6)
     g.display_grid()
+    sensory = g.spawn_agent()
+    g.display_grid()
+    print(sensory)
+
+    cmd = ['l', 'r', 'f', 's', 'p']
+    while True:
+        s = input("enter command: Left=l, Right=r, Forward=f , Pickup=p, Shoot=s")
+        if s not in cmd:
+            continue
+        if s == 'l':
+            slist = g.agent_rotate_left()
+        elif s == 'r':
+            slist = g.agent_rotate_right()
+        elif s == 'p':
+            slist = g.agent_pickup()
+        elif s == 's':
+            slist = g.agent_shoot()
+        else:
+            slist = g.agent_move_forward()
+
+        g.display_grid()
+        print("confou,stench,tingle,glitte,bumppp,scream")
+        print(slist)
