@@ -13,21 +13,24 @@ if __name__ == "__main__":
     loc = list(agent.currentpos())  # agent call
     print(loc)
     # loc2 = list(prolog.query("move(moveforward, [0,0,0,0,0,0])")) # manual (need to have a list)
-
-    # agent.move("turnleft", [0, 0, 0, 0, 0, 0])  # turning left
-    # agent.move("moveforward", [0, 0, 0, 0, 1, 0])  # test bump
-    # loc8 = list(agent.currentpos())
-    # print(loc8)
-    # agent.move("turnright", [0, 0, 0, 0, 0, 0])  #go back to start
+    
+    agent.move("turnleft", [0, 0, 0, 0, 0, 0])  # turning left
+    agent.move("moveforward", [0, 0, 0, 0, 1, 0])  # test bump
+    loc8 = list(agent.currentpos())
+    print(loc8)
+    agent.move("turnright", [0, 0, 0, 0, 0, 0])  #go back to start
 
     agent.move("moveforward", [0, 0, 0, 0, 0, 0])
     loc2 = list(agent.currentpos())
     print(loc2)
+    loc12 = list(agent.prolog.query("listing(safe)"))
+    print(loc12)
+
     agent.move("turnright", [0, 0, 0, 0, 0, 0])  # testing right turn
     loc3 = list(agent.currentpos())
     print(loc3)
 
-    agent.move("moveforward", [0, 1, 0, 0, 0, 0])  # testing scent
+    agent.move("moveforward", [0, 1, 0, 0, 0, 0])  # testing stench
     loc4 = list(agent.currentpos())
     print(loc4)
 
@@ -35,10 +38,11 @@ if __name__ == "__main__":
     loc5 = list(agent.currentpos())
     print(loc5)
 
-    agent.move("moveforward", [0, 0, 0, 1, 0, 0, ])  # testing coin
+    agent.move("moveforward", [0, 0, 0, 1, 0, 0])  # testing coin
     loc5 = list(agent.currentpos())
     print(loc5)
-
+    print(bool(list(agent.visited(3, 3))))  # testing agent visited
+    print((bool(agent.visited)))  # testing agent visited
     print(bool(list(agent.visited(0, 0))))  # testing agent visited
 
     loc10 = list(agent.prolog.query("listing(stench)"))
@@ -55,6 +59,22 @@ if __name__ == "__main__":
 
     loc11 = list(agent.prolog.query("listing(possible_portal)"))
     print(loc11)
+
+
+    loc12 = list(agent.prolog.query("safe(X,Y)"))
+    print(loc12)
+
+    loc5 = list(agent.currentpos())
+    print(loc5)
+    loc13 = list(agent.prolog.query("reposition([on, on, off, on, off, off])")) #test portal
+    print(loc13)
+    loc5 = list(agent.currentpos())
+    print(loc5)
+
+    loc11 = list(agent.prolog.query("listing(glitter)"))
+    print(loc11)
+
+
     # spawn agent on absolute map
     g.spawn_agent()
     # g.display_grid()

@@ -10,12 +10,28 @@ consult :- consult('C:/Users/user/Desktop/prolog/Agent.pl').
 % Declaration of dynamic (editable) predicates, eg.:- dynamic(father/2)
 :- dynamic(current/3).
 :- dynamic(hasarrow/0).
+:- dynamic(safe/2).
+:- dynamic(visited/2).
+:- dynamic(possible_wumpus/2).
+:- dynamic(possible_portal/2).
+:- dynamic(wumpus/2).
+:- dynamic(confoundus/2).
+:- dynamic(tingle/2).
+:- dynamic(stench/2).
 
 
 % ----------Agent knowledge---------------
 current(0,0,rnorth). %initialised to 0,0,rnorth, can be changed
 
+safe(0,0).
+safe(0,1).
+safe(-1,0).
+safe(1,0).
+safe(0,-1).
+            
+
 hasarrow().
+
 
 % ----------Agent functions---------------
 reborn() :- retractall(current(_,_,_)),
@@ -23,8 +39,127 @@ reborn() :- retractall(current(_,_,_)),
             retractall(hasarrow),
             asserta(hasarrow()).
 
+reposition([C, S, T, G, B, SC]) :-  retractall(current(_,_,_)),
+                                    asserta(current(0,0,rnorth)),
+                                    retractall(safe(_,_)),
+                                    retractall(visited(_,_)),
+                                    retractall(possible_wumpus(_,_)),
+                                    retractall(possible_portal(_,_)),
+                                    retractall(wumpus(_,_)),
+                                    retractall(confoundus(_,_)),
+                                    retractall(tingle(_,_)),
+                                    retractall(stench(_,_)),
+                                    %retractall(glitter(_,_)), %existence of unpicked coins
+                                    safe(0,0).
+
+reposition([C, S, T, G, B, SC]) :-        S = on,
+                                          current(X,Y,Z),
+                                          write("test"),
+                                          %write("move first\n"),
+                                          assertz(stench(X,Y)),
+                                          repo_assignbwumpus(Z). 
+
+repo_assignbwumpus(rnorth) :-   current(X,Y,Z),
+                            D is Y+1,
+                            assertz(possible_wumpus(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_wumpus(E,Y)),
+                            F is X-1,
+                            assertz(possible_wumpus(F,Y)),
+                            G is Y-1,
+                            assertz(possible_wumpus(X,G)).
+
+repo_assignbwumpus(reast) :-     current(X,Y,Z),
+                            write("i sense a wumpus in the forces\n"),
+                            D is Y+1,
+                            assertz(possible_wumpus(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_wumpus(E,Y)),
+                            F is X-1,
+                            assertz(possible_wumpus(F,Y)),
+                            G is Y-1,
+                            assertz(possible_wumpus(X,G)).
+
+repo_assignbwumpus(rwest) :-     current(X,Y,Z),
+                            D is Y+1,
+                            assertz(possible_wumpus(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_wumpus(E,Y)),
+                            F is X-1,
+                            assertz(possible_wumpus(F,Y)),
+                            G is Y-1,
+                            assertz(possible_wumpus(X,G)).
+
+repo_assignbwumpus(rsouth) :-    current(X,Y,Z),
+                            D is Y+1,
+                            assertz(possible_wumpus(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_wumpus(E,Y)),
+                            F is X-1,
+                            assertz(possible_wumpus(F,Y)),
+                            G is Y-1,
+                            assertz(possible_wumpus(X,G)).
+
+
+reposition([C, S, T, G, B, SC]) :-        T = on,
+                                          current(X,Y,Z),
+                                          %write("move first\n"),
+                                          assertz(tingle(X,Y)),
+                                          repo_assign_portal(Z).
+
+repo_assign_portal(rnorth) :-   current(X,Y,Z),
+                            D is Y+1,
+                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_portal(E,Y)),
+                            F is X-1,
+                            assertz(possible_portal(F,Y)),
+                            G is Y-1,
+                            assertz(possible_portal(X,G)).
+
+repo_assign_portal(reast) :-     current(X,Y,Z),
+                            write("i sense a wumpus in the forces\n"),
+                            D is Y+1,
+                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_portal(E,Y)),
+                            F is X-1,
+                            assertz(possible_portal(F,Y)),
+                            G is Y-1,
+                            assertz(possible_portal(X,G)).
+
+repo_assign_portal(rwest) :-     current(X,Y,Z),
+                            D is Y+1,
+                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_portal(E,Y)),
+                            F is X-1,
+                            assertz(possible_portal(F,Y)),
+                            G is Y-1,
+                            assertz(possible_portal(X,G)).
+
+repo_assign_portal(rsouth) :-     current(X,Y,Z),
+                            D is Y+1,
+                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            E is X+1,
+                            assertz(possible_portal(E,Y)),
+                            F is X-1,
+                            assertz(possible_portal(F,Y)),
+                            G is Y-1,
+                            assertz(possible_portal(X,G)).
+
+reposition([C, S, T, G, B, SC]) :-        G = on,
+                                          current(X,Y,Z),
+                                          %write("move first\n"),
+                                          write("im richhh i find coin , YEET\n"),
+                                          assertz(glitter(X,Y)).
+            
+
+
 shoot() :- hasarrow,
            retractall(hasarrow()).
+
+
 
 move(shoot, [C, S, T, G, B, SC]) :- shoot.
 
@@ -75,20 +210,28 @@ move(moveforward, [C, S, T, G, B, SC]) :- current(X,Y,Z),
                                           assertz(visited(X,Y)),
                                           write("i am now moving forward\n"),
                                           forward(Z). %for some reason forward not updated yet
-                                         %S = on,
-                                         %write("wumpus detected nearby\n"),
-                                         %write("currently at\n"),
-                                         %write(X),
-                                         %write(Y),
-                                         %pos_wumpus(X,Y),
-                                         %T = on,
-                                         %write("detect portal nearby").
 
+move(moveforward, [C, S, T, G, B, SC]):- S = off,
+                                        T = off,
+                                        G = off,
+                                        B = off,
+                                        current(X,Y,Z),
+                                        D is X+1,
+                                        assertz(safe(D,Y)),
+                                        E is X-1,
+                                        assertz(safe(E,Y)),
+                                        F is Y+1,
+                                        assertz(safe(X,F)),
+                                        G is Y-1,
+                                        assertz(safe(X,G)).
+
+
+                                         
 move(moveforward, [C, S, T, G, B, SC]) :- S = on,
                                           current(X,Y,Z),
                                           %write("move first\n"),
                                           assertz(stench(X,Y)),
-                                          assignbwumpus(Z).
+                                          assignbwumpus(Z). 
 
 assignbwumpus(rnorth) :-   current(X,Y,Z),
                             D is Y+1,
@@ -96,7 +239,7 @@ assignbwumpus(rnorth) :-   current(X,Y,Z),
                             E is X+1,
                             assertz(possible_wumpus(E,Y)),
                             F is X-1,
-                            assertz(possible_wumpus(E,Y)).
+                            assertz(possible_wumpus(F,Y)).
 
 assignbwumpus(reast) :-     current(X,Y,Z),
                             write("i sense a wumpus in the forces\n"),
@@ -105,7 +248,7 @@ assignbwumpus(reast) :-     current(X,Y,Z),
                             E is Y+1,
                             assertz(possible_wumpus(X,E)),
                             F is Y-1,
-                            assertz(possible_wumpus(X,E)).
+                            assertz(possible_wumpus(X,F)).
 
 assignbwumpus(rwest) :-     current(X,Y,Z),
                             D is X-1,
@@ -113,9 +256,9 @@ assignbwumpus(rwest) :-     current(X,Y,Z),
                             E is Y+1,
                             assertz(possible_wumpus(X,E)),
                             F is Y-1,
-                            assertz(possible_wumpus(X,E)).
+                            assertz(possible_wumpus(X,F)).
 
-assignbwumpus(rsouth) :-     current(X,Y,Z),
+assignbwumpus(rsouth) :-    current(X,Y,Z),
                             D is Y-1,
                             assertz(possible_wumpus(X,D)), %y is up down , x is left right
                             E is X+1,
@@ -137,7 +280,7 @@ assign_portal(rnorth) :-   current(X,Y,Z),
                             E is X+1,
                             assertz(possible_portal(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(E,Y)).
+                            assertz(possible_portal(F,Y)).
 
 assign_portal(reast) :-     current(X,Y,Z),
                             write("i sense a wumpus in the forces\n"),
@@ -146,7 +289,7 @@ assign_portal(reast) :-     current(X,Y,Z),
                             E is Y+1,
                             assertz(possible_portal(X,E)),
                             F is Y-1,
-                            assertz(possible_portal(X,E)).
+                            assertz(possible_portal(X,F)).
 
 assign_portal(rwest) :-     current(X,Y,Z),
                             D is X-1,
@@ -154,7 +297,7 @@ assign_portal(rwest) :-     current(X,Y,Z),
                             E is Y+1,
                             assertz(possible_portal(X,E)),
                             F is Y-1,
-                            assertz(possible_portal(X,E)).
+                            assertz(possible_portal(X,F)).
 
 assign_portal(rsouth) :-     current(X,Y,Z),
                             D is Y-1,
@@ -168,15 +311,51 @@ move(moveforward, [C, S, T, G, B, SC]) :- G = on,
                                           current(X,Y,Z),
                                           %write("move first\n"),
                                           write("im richhh i find coin , YEET\n"),
-                                          assertz(coin(X,Y)).
+                                          assertz(glitter(X,Y)).
+
+
+move(pickup, [C, S, T, G, B, SC]) :- current(X,Y,Z),
+                                     glitter(X,Y),
+                                     retract(glitter(X,Y)).
+
 
 move(moveforward, [C, S, T, G, B, SC]) :- B = on,
-                                          current(X,Y,Z),
+                                          current(X,Y,Z), %y is up down , x is left right
                                           %write("move first\n"),
                                           write("knn cb wall bump\n"),
-                                          assertz(wall(X,Y)),
-                                          retractall(current(_,_,_)),
-                                          assertz(current(X,Y,Z)).
+                                          assign_wall(Z).
+
+assign_wall(rnorth) :- current(X,Y,Z),
+                        D is Y-1,
+                       assertz(wall(X,Y)),
+                       retract(current(X,Y,Z)),
+                       assertz(current(X,D,Z)).
+
+assign_wall(reast) :- current(X,Y,Z), 
+                        D is X-1,
+                       assertz(wall(X,Y)),
+                       retract(current(X,Y,Z)),
+                       assertz(current(D,Y,Z)).
+
+assign_wall(rwest) :- current(X,Y,Z),
+                        D is X+1,
+                       assertz(wall(X,Y)),
+                       retract(current(X,Y,Z)),
+                       assertz(current(D,Y,Z)).
+
+assign_wall(rsouth) :- current(X,Y,Z),
+                        D is Y+1,
+                       assertz(wall(X,Y)),
+                       retract(current(X,Y,Z)),
+                       assertz(current(X,D,Z)).
+
+
+
+move(shoot, [C, S, T, G, B, SC]) :-       SC = on,
+                                          current(X,Y,Z),
+                                          %write("scream is heart\n"),
+                                          retractall(possible_wumpus), %retract possible wumpus
+                                          retractall(stench). % no more stench
                                         
 
 
@@ -242,11 +421,17 @@ possible_portal(X,Y) :-
 
 tingle(X,Y) :-
 
-coin(X,Y) :- 
+glitter(X,Y) :- 
 
 wall(X,Y) :-
 
 stench(X,Y) :-
+
+wumpus(X,Y) :-
+
+confoundus(X,Y) :-
+
+safe(X,Y) :-
 
 %move(pickup, [C, S, T, G, B, SC]) :- G = on,
 %               .
