@@ -42,8 +42,8 @@ class Agent:
             bump = 'on'
         if L[5]:
             scream = 'on'
-        self.prolog.query(
-            f"move({A}, [{confound},{stench},{tingle},{glitter},{bump},{scream}]).")
+        loc2 = list(self.prolog.query(
+            f"move({A}, [{confound},{stench},{tingle},{glitter},{bump},{scream}])."))
 
     def reposition(self, L) -> None:
         confound = 'off'
@@ -84,6 +84,9 @@ class Agent:
             raise ValueError(f'{d} is not a direction!')
         # is true if xy is the current relative position and d is current relative orientation of the agent
         return self.prolog.query(f"current([{x},{y},{d}])")
+
+    def currentpos(self) -> list:
+        return self.prolog.query("current(X,Y,Z)")
 
     def hasarrow(self):
         return self.prolog.query(f"hasarrow()")

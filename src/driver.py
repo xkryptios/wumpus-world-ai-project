@@ -7,6 +7,54 @@ if __name__ == "__main__":
     g = Grid(6, 6)
     agent = Agent(1)
 
+    # ryan test
+    prolog = Prolog()
+    prolog.consult("Agent.pl")
+    loc = list(agent.currentpos())  # agent call
+    print(loc)
+    # loc2 = list(prolog.query("move(moveforward, [0,0,0,0,0,0])")) # manual (need to have a list)
+
+    # agent.move("turnleft", [0, 0, 0, 0, 0, 0])  # turning left
+    # agent.move("moveforward", [0, 0, 0, 0, 1, 0])  # test bump
+    # loc8 = list(agent.currentpos())
+    # print(loc8)
+    # agent.move("turnright", [0, 0, 0, 0, 0, 0])  #go back to start
+
+    agent.move("moveforward", [0, 0, 0, 0, 0, 0])
+    loc2 = list(agent.currentpos())
+    print(loc2)
+    agent.move("turnright", [0, 0, 0, 0, 0, 0])  # testing right turn
+    loc3 = list(agent.currentpos())
+    print(loc3)
+
+    agent.move("moveforward", [0, 1, 0, 0, 0, 0])  # testing scent
+    loc4 = list(agent.currentpos())
+    print(loc4)
+
+    agent.move("moveforward", [0, 0, 1, 0, 0, 0])  # testing portal
+    loc5 = list(agent.currentpos())
+    print(loc5)
+
+    agent.move("moveforward", [0, 0, 0, 1, 0, 0, ])  # testing coin
+    loc5 = list(agent.currentpos())
+    print(loc5)
+
+    print(bool(list(agent.visited(0, 0))))  # testing agent visited
+
+    loc10 = list(agent.prolog.query("listing(stench)"))
+    print(loc10)
+
+    loc11 = list(agent.prolog.query("listing(possible_wumpus)"))
+    print(loc11)
+
+    loc11 = list(agent.prolog.query("listing(visited)"))
+    print(loc11)
+
+    loc11 = list(agent.prolog.query("listing(tingle)"))
+    print(loc11)
+
+    loc11 = list(agent.prolog.query("listing(possible_portal)"))
+    print(loc11)
     # spawn agent on absolute map
     g.spawn_agent()
     # g.display_grid()
