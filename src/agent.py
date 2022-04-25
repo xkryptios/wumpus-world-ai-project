@@ -109,8 +109,18 @@ class Agent:
 
     def safe(self, x: int, y: int) -> bool:
         return self.prolog.query(f"safe({x},{y})")
+    def get_all_visited(self)->list:
+        return list(self.prolog.query(f"visited(X,Y)"))
+    def get_all_safe_cells(self)->list:
+        return list(self.prolog.query("safe(X,Y"))
+    
+    def get_current_location(self):
+        return list(self.prolog.query('current(X,Y,D'))[0]
 
 
 if __name__ == "__main__":
     print("hello")
     # pass
+    origin = {'X':0,'Y':0}
+    a = list(origin)
+    print(type(a),a)
