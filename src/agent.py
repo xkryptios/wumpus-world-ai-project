@@ -123,7 +123,7 @@ class Agent:
         return coordinate_list
 
     def get_all_safe_cells(self) -> list:
-        list_of_dict = list(self.prolog.query("safe(X,Y"))
+        list_of_dict = list(self.prolog.query("safe(X,Y)"))
         coordinate_list = []
         for i in list_of_dict:
             coordinate_list.append(tuple(i.values()))
@@ -136,13 +136,14 @@ class Agent:
         return unvisited_safe
 
     def get_current_location(self) -> tuple:
-        dic = list(self.prolog.query('current(X,Y,D'))[0]
-        values_list = dic.values()
+        dic = list(self.prolog.query('current(X,Y,D)'))[0]
+        values_list = list(dic.values())
         return (values_list[0], values_list[1])
 
     def get_current_direction(self):
-        dic = list(self.prolog.query('current(X,Y,D'))[0]
-        values_list = dic.values()
+        dic = list(self.prolog.query('current(X,Y,D)'))[0]
+        values_list = list(dic.values())
+        print(values_list)
         return values_list[2]
 
 

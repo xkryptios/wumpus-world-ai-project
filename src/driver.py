@@ -149,30 +149,37 @@ def get_turns(i, f, d) -> tuple:
 
 if __name__ == "__main__":
     # initialise agent and map
-    # g = Grid(6, 6)
-    # agent = Agent(1)
+    g = Grid(6, 6)
+    agent = Agent(1)
 
-    # g.display_grid()
+    g.display_grid()
+    # agent.reborn()
 
-    # # check if there is still safe cells
-    # safe_cell_list = agent.get_all_safe_cells()
-    # while len(safe_cell_list) != 0:
-    #     # ask grid to get a list of action
-    #     visited_list = agent.get_all_visited()
-    #     end_location = safe_cell_list.pop()
-    #     start_location = agent.get_current_location()
-    #     action_list = find_path(start_location, end_location, visited_list)
+    # check if there is still safe cells
+    unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+    while len(unvisited_safe_cell_list) != 0:
+        # ask grid to get a list of action
+        visited_list = agent.get_all_visited()
+        print('visited list: ',visited_list)
+        end_location = unvisited_safe_cell_list.pop()
+        print('end',end_location)
+        start_location = agent.get_current_location()
+        print('start: ',start_location)
+        visited_list.append(end_location)
+        action_list = find_path(start_location, end_location, visited_list)
+        print(convert_cell_to_action(action_list,agent.get_current_direction()))
+        break
 
-    #     # if agent confirm the path is safe
-    #     if agent.explore(action_list):
-    #         for action in action_list:
-    #             sensory_list = g.move(action)  # get sensory from the grid map
-    #             # tell agent movement is made and update sensory
-    #             agent.move(action, sensory_list)
-    #     # check current place gt coin, if yes pickup
-    #     # if g.check_for_coin_in_current_cell():
+        # if agent confirm the path is safe
+        # if agent.explore(action_list):
+        #     for action in action_list:
+        #         sensory_list = g.move(action)  # get sensory from the grid map
+        #         # tell agent movement is made and update sensory
+        #         agent.move(action, sensory_list)
+        # check current place gt coin, if yes pickup
+        # if g.check_for_coin_in_current_cell():
 
-    # # get back to origin
+    # get back to origin
     # origin = {'X': 0, 'Y': 0}
     # start_location = agent.get_current_location()
     # action_list = find_path(start_location, origin)
@@ -185,12 +192,12 @@ if __name__ == "__main__":
     # print("end of exploration")
     # g.display_grid()
 
-    safe_list = [(-1, 2), (1, 2)]
-    visited_list = [(0, 1), (0, 0), (0, -1), (-1, 0), (1, 0), (0, 2), (-1, 2)]
-    start = (0, 0)
-    end = (-1, 2)
-    res = find_path(start, end, visited_list)
-    i_d = 'reast'
-    print(res)
-    actions = convert_cell_to_action(res, i_d)
-    print(actions)
+    # safe_list = [(-1, 2), (1, 2)]
+    # visited_list = [(0, 1), (0, 0), (0, -1), (-1, 0), (1, 0), (0, 2), (-1, 2)]
+    # start = (0, 0)
+    # end = (-1, 2)
+    # res = find_path(start, end, visited_list)
+    # i_d = 'reast'
+    # print(res)
+    # actions = convert_cell_to_action(res, i_d)
+    # print(actions)

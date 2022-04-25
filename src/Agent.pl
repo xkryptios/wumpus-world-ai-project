@@ -24,6 +24,7 @@ consult :- consult('C:/Users/user/Desktop/prolog/Agent.pl').
 % ----------------------------------Agent knowledge---------------------------------
 current(0,0,rnorth). %initialised to 0,0,rnorth, can be changed
 
+visited(0,0).
 safe(0,0).
 safe(0,1).
 safe(-1,0).
