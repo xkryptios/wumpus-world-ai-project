@@ -16,37 +16,58 @@ if __name__ == "__main__":
     
     agent.move("turnleft", [0, 0, 0, 0, 0, 0])  # turning left
     agent.move("moveforward", [0, 0, 0, 0, 1, 0])  # test bump
+    loc10 = list(agent.prolog.query("listing(bump)"))
+    print(loc10)
     loc8 = list(agent.currentpos())
     print(loc8)
     agent.move("turnright", [0, 0, 0, 0, 0, 0])  #go back to start
 
+    #move to 0,1
     agent.move("moveforward", [0, 0, 0, 0, 0, 0])
     loc2 = list(agent.currentpos())
     print(loc2)
+
     loc12 = list(agent.prolog.query("listing(safe)"))
     print(loc12)
 
+    #stay at 0,1
     agent.move("turnright", [0, 0, 0, 0, 0, 0])  # testing right turn
     loc3 = list(agent.currentpos())
     print(loc3)
 
+    #move to 1,1
     agent.move("moveforward", [0, 1, 0, 0, 0, 0])  # testing stench
     loc4 = list(agent.currentpos())
     print(loc4)
-
+    loc10 = list(agent.prolog.query("listing(possible_wumpus)"))
+    print(loc10)
 
     print("tesing wumpus assignment\n")
+
+    #2,1
     agent.move("moveforward", [0, 0, 0, 0, 0, 0])
     print(list(agent.currentpos()))
 
+    #2,1
     agent.move("turnleft", [0, 0, 0, 0, 0, 0])
     print(list(agent.currentpos()))
 
+    #2,2
     agent.move("moveforward", [0, 1, 0, 0, 0, 0])
     print(list(agent.currentpos()))
 
+    loc10 = list(agent.prolog.query("listing(possible_wumpus)"))
+    print(loc10)
+
+    loc10 = list(agent.prolog.query("listing(wumpus)"))
+    print(loc10)
 
 
+
+
+
+    loc11 = list(agent.prolog.query("listing(possible_portal)"))
+    print(loc11)
 
     agent.move("moveforward", [0, 0, 1, 0, 0, 0])  # testing portal
     loc5 = list(agent.currentpos())

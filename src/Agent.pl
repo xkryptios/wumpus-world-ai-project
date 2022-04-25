@@ -18,9 +18,11 @@ consult :- consult('C:/Users/user/Desktop/prolog/Agent.pl').
 :- dynamic(confoundus/2).
 :- dynamic(tingle/2).
 :- dynamic(stench/2).
+:- dynamic(scream/2).
+:- dynamic(bump/2).
 
 
-% ----------Agent knowledge---------------
+% ----------------------------------Agent knowledge---------------------------------
 current(0,0,rnorth). %initialised to 0,0,rnorth, can be changed
 
 safe(0,0).
@@ -32,8 +34,7 @@ safe(0,-1).
 
 hasarrow().
 
-
-% ----------Agent functions---------------
+%----------------------- ----------Agent functions---------------------------------
 reborn() :- retractall(current(_,_,_)),
             asserta(current(0,0,rnorth)),
             retractall(hasarrow),
@@ -49,9 +50,12 @@ reposition([C, S, T, G, B, SC]) :-  retractall(current(_,_,_)),
                                     retractall(confoundus(_,_)),
                                     retractall(tingle(_,_)),
                                     retractall(stench(_,_)),
+                                    retractall(bump(_,_)),
+                                    retractall(scream(_,_)),
                                     %retractall(glitter(_,_)), %existence of unpicked coins
                                     safe(0,0).
 
+%--------------------------------------Reposition--------------------------------
 reposition([C, S, T, G, B, SC]) :-        S = on,
                                           current(X,Y,Z),
                                           write("test"),
@@ -154,7 +158,7 @@ reposition([C, S, T, G, B, SC]) :-        G = on,
                                           write("im richhh i find coin , YEET\n"),
                                           assertz(glitter(X,Y)).
             
-
+%--------------------------------------shoot--------------------------------
 
 shoot() :- hasarrow,
            retractall(hasarrow()).
@@ -163,45 +167,14 @@ shoot() :- hasarrow,
 
 move(shoot, [C, S, T, G, B, SC]) :- shoot.
 
-%testing func ryan
-%move(moveforward, [C, S, T, G, B, SC]) :- S = on,
+move(shoot, [C, S, T, G, B, SC]) :-       SC = on,
                                           current(X,Y,Z),
-                                          write("move first\n"),
-                                          wumpus(X,Y).
-                                          
+                                          %write("scream is heart\n"),
+                                          retractall(possible_wumpus), %retract possible wumpus
+                                          assertz(scream(X,Y)),
+                                          retractall(stench). % no more stench
 
-%pos_wumpus(X,Y) :-  write("i detect a stench\n"),
-                    write("possible wumpus at"),
-                    %write(X), %detects x  at 0
-                    D is X+1,
-                    write(D),
-                    write(Y),
-                    assertz(possible_wumpus(D,Y)),
-                    E is Y+1,
-                    write(X),
-                    write(E),
-                    assertz(possible_wumpus(X,E)),
-                    F  is Y-1,
-                    write(X),
-                    write(F),
-                    assertz(possible_wumpus(X,F)).
-
-
-%pos_portal(X,Y) :-  write("i detect a tingle\n"),
-                    write("possible portal at"),
-                    D is X+1,
-                    write(D),
-                    write(Y),
-                    E is Y+1,
-                    write(X),
-                    write(E),
-                    F  is Y-1,
-                    write(X),
-                    write(F).
-
-
-                    
-                                         
+%--------------------------------------Move--------------------------------               
 
 % moveforward for rnorth
 
@@ -209,13 +182,79 @@ move(shoot, [C, S, T, G, B, SC]) :- shoot.
 move(moveforward, [C, S, T, G, B, SC]) :- current(X,Y,Z),
                                           assertz(visited(X,Y)),
                                           write("i am now moving forward\n"),
-                                          forward(Z). %for some reason forward not updated yet
+                                          retractall(bump(_,_)),
+                                          retractall(scream(_,_)),
+                                          forward(Z). 
 
 move(moveforward, [C, S, T, G, B, SC]):- S = off,
                                         T = off,
                                         B = off,
                                         current(X,Y,Z),
+                                        write("assigning safe\n"),
                                         assign_safe(Z).
+            
+%------------------------------------------------move forward------------------------------------------
+
+forward(rnorth) :- current(X,Y,Z),
+                    G is Y+1,
+                    retractall(current(_,_,_)),
+                    assertz(current(X,G,Z)).
+
+forward(reast) :- current(X,Y,Z),
+                    G is X+1,
+                    retractall(current(_,_,_)),
+                    assertz(current(G,Y,Z)).
+forward(rwest) :- current(X,Y,Z),
+                    G is X-1,
+                    retractall(current(_,_,_)),
+                    asserta(current(G,Y,Z)).
+forward(rsouth) :- current(X,Y,Z),
+                    G is Y-1,
+                    retractall(current(_,_,_)),
+                    asserta(current(X,G,Z)).
+
+%---------------------------------turning-----------------------------------------
+
+% turnleft
+move(turnleft, [C, S, T, G, B, SC]) :- current(X,Y,Z),
+                                        retractall(bump(_,_)),
+                                          retractall(scream(_,_)),
+                                       turnleft(Z).
+
+turnleft(rnorth) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,rwest)).
+turnleft(reast) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,rnorth)).
+turnleft(rwest) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,rsouth)).
+turnleft(rsouth) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,reast)).
+
+% turnright
+move(turnright, [C, S, T, G, B, SC]) :- current(X,Y,Z),
+                                        retractall(bump(_,_)),
+                                          retractall(scream(_,_)),
+                                       turnright(Z).
+
+turnright(rnorth) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    write("i was rnorth , turning to face reast now\n"),
+                    asserta(current(X,Y,reast)).
+turnright(rwest) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,rnorth)).
+turnright(rsouth) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,rwest)).
+turnright(reast) :- current(X,Y,Z),
+                    retractall(current(_,_,_)),
+                    asserta(current(X,Y,rsouth)).
+
+%--------------------------------------Asign safe------------------------------------
 
 assign_safe(rnorth) :-                  current(X,Y,Z),
                                         D is Y+1,  %y is up down , x is left right
@@ -251,15 +290,27 @@ assign_safe(rwest) :-                  current(X,Y,Z),
 
 
 
+%--------------------------------------Assign wumpus--------------------------------
 
-                                         
+
+                                    
 move(moveforward, [C, S, T, G, B, SC]) :- S = on,
                                           current(X,Y,Z),
-                                          %write("move first\n"),
+                                          check_wumpus(Z). 
+
+move(moveforward, [C, S, T, G, B, SC]) :- S = on,
+                                          current(X,Y,Z),
                                           assertz(stench(X,Y)),
                                           assignbwumpus(Z). 
 
+/*move(moveforward, [C, S, T, G, B, SC]) :-   S = on,
+                                            current(X,Y,Z),
+                                            J,
+                                            check_wumpus(Z).*/
+
+
 assignbwumpus(rnorth) :-   current(X,Y,Z),
+                            write("i sense a wumpus in the forces\n"),
                             D is Y+1,
                             assertz(possible_wumpus(X,D)), %y is up down , x is left right
                             E is X+1,
@@ -269,7 +320,6 @@ assignbwumpus(rnorth) :-   current(X,Y,Z),
 
 assignbwumpus(reast) :-     current(X,Y,Z),
                             write("i sense a wumpus in the forces\n"),
-                            check_wumpus(X,Y),
                             D is X+1,
                             assertz(possible_wumpus(D,Y)), %y is up down , x is left right
                             E is Y+1,
@@ -277,13 +327,8 @@ assignbwumpus(reast) :-     current(X,Y,Z),
                             F is Y-1,
                             assertz(possible_wumpus(X,F)).
 
-check_wumpus(X,Y) :- D is X-1,
-                     possible_wumpus(D,Y),
-                     assertz(wumpus(D,Y)),
-                     write("wumpus assigned to "),
-                     write(D),write(",",write(Y)).
-
 assignbwumpus(rwest) :-     current(X,Y,Z),
+                            write("i sense a wumpus in the forces\n"),
                             D is X-1,
                             assertz(possible_wumpus(D,Y)), %y is up down , x is left right
                             E is Y+1,
@@ -292,18 +337,136 @@ assignbwumpus(rwest) :-     current(X,Y,Z),
                             assertz(possible_wumpus(X,F)).
 
 assignbwumpus(rsouth) :-    current(X,Y,Z),
+                            write("i sense a wumpus in the forces\n"),
                             D is Y-1,
                             assertz(possible_wumpus(X,D)), %y is up down , x is left right
                             E is X+1,
                             assertz(possible_wumpus(E,Y)),
                             F is X-1,
                             assertz(possible_wumpus(F,Y)).
-                        
+
+
+check_wumpus(rnorth) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+check_wumpus(rnorth) :- current(X,Y,Z),
+                        D is X+1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+
+check_wumpus(rnorth) :- current(X,Y,Z),
+                        D is Y+1,
+                     possible_wumpus(X,D),
+                     assertz(wumpus(X,D)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(X),
+                     write(D).
+
+
+
+
+check_wumpus(reast) :- current(X,Y,Z),
+                        D is Y+1,
+                     possible_wumpus(X,D),
+                     assertz(wumpus(X,D)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(X),
+                     write(D).
+
+check_wumpus(reast) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+check_wumpus(reast) :- current(X,Y,Z),
+                        D is Y-1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+
+check_wumpus(rsouth) :- current(X,Y,Z),
+                        D is Y-1,
+                     possible_wumpus(X,D),
+                     assertz(wumpus(X,D)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(X),
+                     write(D).
+
+check_wumpus(rsouth) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+check_wumpus(rsouth) :- current(X,Y,Z),
+                        D is X+1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+check_wumpus(rwest) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(D),
+                     write(Y).
+
+
+check_wumpus(rwest) :- current(X,Y,Z),
+                        D is Y+1,
+                     possible_wumpus(X,D),
+                     assertz(wumpus(X,D)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(X),
+                     write(D).
+
+check_wumpus(rwest) :- current(X,Y,Z),
+                        D is Y-1,
+                     possible_wumpus(X,D),
+                     assertz(wumpus(X,D)),
+                     retractall(possible_wumpus(_,_)),
+                     write("wumpus assigned to "),
+                     write(X),
+                     write(D).
+
+
+
+%--------------------------------------Assign portal--------------------------------
 
 
 move(moveforward, [C, S, T, G, B, SC]) :- T = on,
                                           current(X,Y,Z),
-                                          %write("move first\n"),
                                           assertz(tingle(X,Y)),
                                           assign_portal(Z).
 
@@ -313,7 +476,10 @@ assign_portal(rnorth) :-   current(X,Y,Z),
                             E is X+1,
                             assertz(possible_portal(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)).
+                            assertz(possible_portal(F,Y)),
+                            check_portal(Z),
+                            write("i am resetting pos portal"),
+                            retractall(possible_portal(_,_)).
 
 assign_portal(reast) :-     current(X,Y,Z),
                             write("i sense a wumpus in the forces\n"),
@@ -322,7 +488,10 @@ assign_portal(reast) :-     current(X,Y,Z),
                             E is Y+1,
                             assertz(possible_portal(X,E)),
                             F is Y-1,
-                            assertz(possible_portal(X,F)).
+                            assertz(possible_portal(X,F)),
+                            check_portal(Z),
+                            write("i am resetting pos portal"),
+                            retractall(possible_portal(_,_)).
 
 assign_portal(rwest) :-     current(X,Y,Z),
                             D is X-1,
@@ -330,7 +499,10 @@ assign_portal(rwest) :-     current(X,Y,Z),
                             E is Y+1,
                             assertz(possible_portal(X,E)),
                             F is Y-1,
-                            assertz(possible_portal(X,F)).
+                            assertz(possible_portal(X,F)),
+                            write("i am resetting pos portal"),
+                            check_portal(Z),
+                            retractall(possible_portal(_,_)).
 
 assign_portal(rsouth) :-     current(X,Y,Z),
                             D is Y-1,
@@ -338,7 +510,114 @@ assign_portal(rsouth) :-     current(X,Y,Z),
                             E is X+1,
                             assertz(possible_portal(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)).
+                            assertz(possible_portal(F,Y)),
+                            write("i am resetting pos portal"),
+                            check_portal(Z),
+                            retractall(possible_portal(_,_)).
+
+check_portal(rnorth) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("portal assigned to "),
+                     write(D),
+                     write(Y).
+
+check_portal(rnorth) :- current(X,Y,Z),
+                        D is X+1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("portal assigned to "),
+                     write(D),
+                     write(Y).
+
+
+check_portal(rnorth) :- current(X,Y,Z),
+                        D is Y+1,
+                     possible_portal(X,D),
+                     assertz(portal(X,D)),
+                     write("portal assigned to "),
+                     write(X),
+                     write(D).
+
+
+
+
+check_portal(reast) :- current(X,Y,Z),
+                        D is Y+1,
+                     possible_portal(X,D),
+                     assertz(portal(X,D)),
+                     write("portal assigned to "),
+                     write(X),
+                     write(D).
+
+check_portal(reast) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("[prtal] assigned to "),
+                     write(D),
+                     write(Y).
+
+check_portal(reast) :- current(X,Y,Z),
+                        D is Y-1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("portal assigned to "),
+                     write(D),
+                     write(Y).
+
+
+check_portal(rsouth) :- current(X,Y,Z),
+                        D is Y-1,
+                     possible_portal(X,D),
+                     assertz(portal(X,D)),
+                     write("portal assigned to "),
+                     write(X),
+                     write(D).
+
+check_portal(rsouth) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("portal assigned to "),
+                     write(D),
+                     write(Y).
+
+check_portal(rsouth) :- current(X,Y,Z),
+                        D is X+1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("portal assigned to "),
+                     write(D),
+                     write(Y).
+
+check_portal(rwest) :- current(X,Y,Z),
+                        D is X-1,
+                     possible_portal(D,Y),
+                     assertz(portal(D,Y)),
+                     write("portal assigned to "),
+                     write(D),
+                     write(Y).
+
+
+check_portal(rwest) :- current(X,Y,Z),
+                        D is Y+1,
+                     possible_portal(X,D),
+                     assertz(portal(X,D)),
+                     write("portal assigned to "),
+                     write(X),
+                     write(D).
+
+check_portal(rwest) :- current(X,Y,Z),
+                        D is Y-1,
+                     possible_portal(X,D),
+                     assertz(portal(X,D)),
+                     write("portal assigned to "),
+                     write(X),
+                     write(D).
+
+%--------------------------------------Coin--------------------------------
 
 move(moveforward, [C, S, T, G, B, SC]) :- G = on,
                                           current(X,Y,Z),
@@ -351,6 +630,7 @@ move(pickup, [C, S, T, G, B, SC]) :- current(X,Y,Z),
                                      glitter(X,Y),
                                      retract(glitter(X,Y)).
 
+%--------------------------------------Assign wall--------------------------------
 
 move(moveforward, [C, S, T, G, B, SC]) :- B = on,
                                           current(X,Y,Z), %y is up down , x is left right
@@ -362,109 +642,27 @@ assign_wall(rnorth) :- current(X,Y,Z),
                         D is Y-1,
                        assertz(wall(X,Y)),
                        retract(current(X,Y,Z)),
+                       assertz(bump(X,D)),
                        assertz(current(X,D,Z)).
 
 assign_wall(reast) :- current(X,Y,Z), 
                         D is X-1,
                        assertz(wall(X,Y)),
                        retract(current(X,Y,Z)),
+                       assertz(bump(D,Y)),
                        assertz(current(D,Y,Z)).
 
 assign_wall(rwest) :- current(X,Y,Z),
                         D is X+1,
                        assertz(wall(X,Y)),
                        retract(current(X,Y,Z)),
+                       assertz(bump(D,Y)),
                        assertz(current(D,Y,Z)).
 
 assign_wall(rsouth) :- current(X,Y,Z),
                         D is Y+1,
                        assertz(wall(X,Y)),
                        retract(current(X,Y,Z)),
+                       assertz(bump(X,D)),
                        assertz(current(X,D,Z)).
 
-
-
-move(shoot, [C, S, T, G, B, SC]) :-       SC = on,
-                                          current(X,Y,Z),
-                                          %write("scream is heart\n"),
-                                          retractall(possible_wumpus), %retract possible wumpus
-                                          retractall(stench). % no more stench
-                                        
-
-
-forward(rnorth) :- current(X,Y,Z),
-                    G is Y+1,
-                    retractall(current(_,_,_)),
-                    assertz(current(X,G,Z)).
-
-forward(reast) :- current(X,Y,Z),
-                    G is X+1,
-                    retractall(current(_,_,_)),
-                    assertz(current(G,Y,Z)).
-forward(rwest) :- current(X,Y,Z),
-                    G is X-1,
-                    retractall(current(_,_,_)),
-                    asserta(current(G,Y,Z)).
-forward(rsouth) :- current(X,Y,Z),
-                    G is Y-1,
-                    retractall(current(_,_,_)),
-                    asserta(current(X,G,Z)).
-
-% turnleft
-move(turnleft, [C, S, T, G, B, SC]) :- current(X,Y,Z),
-                                       turnleft(Z).
-
-turnleft(rnorth) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,rwest)).
-turnleft(reast) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,rnorth)).
-turnleft(rwest) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,rsouth)).
-turnleft(rsouth) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,reast)).
-
-% turnright
-move(turnright, [C, S, T, G, B, SC]) :- current(X,Y,Z),
-                                       turnright(Z).
-
-turnright(rnorth) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    write("i was rnorth , turning to face reast now\n"),
-                    asserta(current(X,Y,reast)).
-turnright(rwest) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,rnorth)).
-turnright(rsouth) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,rwest)).
-turnright(reast) :- current(X,Y,Z),
-                    retractall(current(_,_,_)),
-                    asserta(current(X,Y,rsouth)).
-
-
-visited(X,Y) :-
-
-possible_wumpus(X,Y) :-
-
-possible_portal(X,Y) :-
-
-tingle(X,Y) :-
-
-glitter(X,Y) :- 
-
-wall(X,Y) :-
-
-stench(X,Y) :-
-
-wumpus(X,Y) :-
-
-confoundus(X,Y) :-
-
-safe(X,Y) :-
-
-%move(pickup, [C, S, T, G, B, SC]) :- G = on,
-%               .
