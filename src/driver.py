@@ -39,7 +39,7 @@ if __name__ == "__main__":
     agent.move("moveforward", [0, 1, 0, 0, 0, 0])  # testing stench
     loc4 = list(agent.currentpos())
     print(loc4)
-    loc10 = list(agent.prolog.query("listing(possible_wumpus)"))
+    loc10 = list(agent.prolog.query("listing(wumpus)"))
     print(loc10)
 
     print("tesing wumpus assignment\n")
@@ -56,11 +56,11 @@ if __name__ == "__main__":
     agent.move("moveforward", [0, 1, 0, 0, 0, 0])
     print(list(agent.currentpos()))
 
-    loc10 = list(agent.prolog.query("listing(possible_wumpus)"))
-    print(loc10)
-
     loc10 = list(agent.prolog.query("listing(wumpus)"))
     print(loc10)
+
+    # loc10 = list(agent.prolog.query("listing(portal)"))
+    # print(loc10)
 
 
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     loc10 = list(agent.prolog.query("listing(stench)"))
     print(loc10)
 
-    loc11 = list(agent.prolog.query("listing(possible_wumpus)"))
+    loc11 = list(agent.prolog.query("listing(wumpus)"))
     print(loc11)
 
     loc11 = list(agent.prolog.query("listing(visited)"))
