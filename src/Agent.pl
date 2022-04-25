@@ -12,7 +12,6 @@ consult :- consult('C:/Users/user/Desktop/prolog/Agent.pl').
 :- dynamic(hasarrow/0).
 :- dynamic(safe/2).
 :- dynamic(visited/2).
-:- dynamic(possible_portal/2).
 :- dynamic(wumpus/2).
 :- dynamic(confoundus/2).
 :- dynamic(tingle/2).
@@ -20,7 +19,7 @@ consult :- consult('C:/Users/user/Desktop/prolog/Agent.pl').
 :- dynamic(scream/2).
 :- dynamic(bump/2).
 :- dynamic(semophore/0).
-
+:- dynamic(nextloc/3).
 
 % ----------------------------------Agent knowledge---------------------------------
 current(0,0,rnorth). %initialised to 0,0,rnorth, can be changed
@@ -48,7 +47,7 @@ reposition([C, S, T, G, B, SC]) :-  retractall(current(_,_,_)),
                                     asserta(current(0,0,rnorth)),
                                     retractall(safe(_,_)),
                                     retractall(visited(_,_)),
-                                    retractall(possible_portal(_,_)),
+                                    retractall(confoundus(_,_)),
                                     retractall(wumpus(_,_)),
                                     retractall(confoundus(_,_)),
                                     retractall(tingle(_,_)),
@@ -58,7 +57,11 @@ reposition([C, S, T, G, B, SC]) :-  retractall(current(_,_,_)),
                                     retractall(semophore()),
                                     asserta(semophore()),
                                     %retractall(glitter(_,_)), %existence of unpicked coins
-                                    safe(0,0).
+                                    asserta(safe(0,0)),
+                                    assertz(safe(0,1)),
+                                    assertz(safe(-1,0)),
+                                    assertz(safe(1,0)),
+                                    assertz(safe(0,-1)).
 
 %--------------------------------------Reposition--------------------------------
 reposition([C, S, T, G, B, SC]) :-        S = on,
@@ -118,44 +121,44 @@ reposition([C, S, T, G, B, SC]) :-        T = on,
 
 repo_assign_portal(rnorth) :-   current(X,Y,Z),
                             D is Y+1,
-                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            assertz(confoundus(X,D)), %y is up down , x is left right
                             E is X+1,
-                            assertz(possible_portal(E,Y)),
+                            assertz(confoundus(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)),
+                            assertz(confoundus(F,Y)),
                             G is Y-1,
-                            assertz(possible_portal(X,G)).
+                            assertz(confoundus(X,G)).
 
 repo_assign_portal(reast) :-     current(X,Y,Z),
                             write("i sense a wumpus in the forces\n"),
                             D is Y+1,
-                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            assertz(confoundus(X,D)), %y is up down , x is left right
                             E is X+1,
-                            assertz(possible_portal(E,Y)),
+                            assertz(confoundus(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)),
+                            assertz(confoundus(F,Y)),
                             G is Y-1,
-                            assertz(possible_portal(X,G)).
+                            assertz(confoundus(X,G)).
 
 repo_assign_portal(rwest) :-     current(X,Y,Z),
                             D is Y+1,
-                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            assertz(confoundus(X,D)), %y is up down , x is left right
                             E is X+1,
-                            assertz(possible_portal(E,Y)),
+                            assertz(confoundus(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)),
+                            assertz(confoundus(F,Y)),
                             G is Y-1,
-                            assertz(possible_portal(X,G)).
+                            assertz(confoundus(X,G)).
 
 repo_assign_portal(rsouth) :-     current(X,Y,Z),
                             D is Y+1,
-                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            assertz(confoundus(X,D)), %y is up down , x is left right
                             E is X+1,
-                            assertz(possible_portal(E,Y)),
+                            assertz(confoundus(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)),
+                            assertz(confoundus(F,Y)),
                             G is Y-1,
-                            assertz(possible_portal(X,G)).
+                            assertz(confoundus(X,G)).
 
 reposition([C, S, T, G, B, SC]) :-        G = on,
                                           current(X,Y,Z),
@@ -478,10 +481,6 @@ check_wumpus(rwest) :- current(X,Y,Z),
 
 %--------------------------------------Assign portal--------------------------------
 
-move(moveforward, [C, S, T, G, B, SC]) :- T = on,
-                                          current(X,Y,Z),
-                                          check_portal(Z).
-
 
 move(moveforward, [C, S, T, G, B, SC]) :- T = on,
                                           current(X,Y,Z),
@@ -490,150 +489,38 @@ move(moveforward, [C, S, T, G, B, SC]) :- T = on,
 
 assign_portal(rnorth) :-   current(X,Y,Z),
                             D is Y+1,
-                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            assertz(confoundus(X,D)), %y is up down , x is left right
                             E is X+1,
-                            assertz(possible_portal(E,Y)),
+                            assertz(confoundus(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)).
+                            assertz(confoundus(F,Y)).
 
 assign_portal(reast) :-     current(X,Y,Z),
                             D is X+1,
-                            assertz(possible_portal(D,Y)), %y is up down , x is left right
+                            assertz(confoundus(D,Y)), %y is up down , x is left right
                             E is Y+1,
-                            assertz(possible_portal(X,E)),
+                            assertz(confoundus(X,E)),
                             F is Y-1,
-                            assertz(possible_portal(X,F)).
+                            assertz(confoundus(X,F)).
 
 assign_portal(rwest) :-     current(X,Y,Z),
                             D is X-1,
-                            assertz(possible_portal(D,Y)), %y is up down , x is left right
+                            assertz(confoundus(D,Y)), %y is up down , x is left right
                             E is Y+1,
-                            assertz(possible_portal(X,E)),
+                            assertz(confoundus(X,E)),
                             F is Y-1,
-                            assertz(possible_portal(X,F)).
+                            assertz(confoundus(X,F)).
 
 assign_portal(rsouth) :-     current(X,Y,Z),
                             D is Y-1,
-                            assertz(possible_portal(X,D)), %y is up down , x is left right
+                            assertz(confoundus(X,D)), %y is up down , x is left right
                             E is X+1,
-                            assertz(possible_portal(E,Y)),
+                            assertz(confoundus(E,Y)),
                             F is X-1,
-                            assertz(possible_portal(F,Y)).
+                            assertz(confoundus(F,Y)).
 
-                            
-check_portal(rnorth) :- current(X,Y,Z),
-                        D is X-1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(D),
-                     write(Y).
+                        
 
-check_portal(rnorth) :- current(X,Y,Z),
-                        D is X+1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(D),
-                     write(Y).
-
-
-check_portal(rnorth) :- current(X,Y,Z),
-                        D is Y+1,
-                     possible_portal(X,D),
-                     assertz(portal(X,D)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(X),
-                     write(D).
-
-
-
-
-check_portal(reast) :- current(X,Y,Z),
-                        D is Y+1,
-                     possible_portal(X,D),
-                     assertz(portal(X,D)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(X),
-                     write(D).
-
-check_portal(reast) :- current(X,Y,Z),
-                        D is X-1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("[prtal] assigned to "),
-                     write(D),
-                     write(Y).
-
-check_portal(reast) :- current(X,Y,Z),
-                        D is Y-1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(D),
-                     write(Y).
-
-
-check_portal(rsouth) :- current(X,Y,Z),
-                        D is Y-1,
-                     possible_portal(X,D),
-                     assertz(portal(X,D)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(X),
-                     write(D).
-
-check_portal(rsouth) :- current(X,Y,Z),
-                        D is X-1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(D),
-                     write(Y).
-
-check_portal(rsouth) :- current(X,Y,Z),
-                        D is X+1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(D),
-                     write(Y).
-
-check_portal(rwest) :- current(X,Y,Z),
-                        D is X-1,
-                     possible_portal(D,Y),
-                     assertz(portal(D,Y)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(D),
-                     write(Y).
-
-
-check_portal(rwest) :- current(X,Y,Z),
-                        D is Y+1,
-                     possible_portal(X,D),
-                     assertz(portal(X,D)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(X),
-                     write(D).
-
-check_portal(rwest) :- current(X,Y,Z),
-                        D is Y-1,
-                     possible_portal(X,D),
-                     assertz(portal(X,D)),
-                     retractall(possible_portal(_,_)),
-                     write("portal assigned to "),
-                     write(X),
-                     write(D).
 
 %--------------------------------------Coin--------------------------------
 
@@ -683,4 +570,127 @@ assign_wall(rsouth) :- current(X,Y,Z),
                        retract(current(X,Y,Z)),
                        assertz(bump(X,D)),
                        assertz(current(X,D,Z)).
+-------------------------------------------explore------------------------------------
+nextloc(0,0,rnorth).
+
+explore([H|T]) :-write(H),current(X,Y,Z), safe(X,Y),
+                 updatenext(H,X,Y,Z),explore2(T).
+
+explore2([H|T]) :- write(H),nextloc(X,Y,Z),
+                     updatenext(H,X,Y,Z), explore2(T).
+
+explore2([]).
+
+
+
+updatenext(forward, X, Y, rnorth) :- D is Y+1, safe(X,D),retractall(nextloc(_,_,_)), asserta(nextloc(X,D,rnorth)).
+
+updatenext(forward, X, Y, reast) :- D is X+1, safe(D,Y),retractall(nextloc(_,_,_)), asserta(nextloc(D,Y,reast)).
+
+updatenext(forward, X, Y, rwest) :- D is X-1,safe(D,Y), retractall(nextloc(_,_,_)), asserta(nextloc(D,Y,rwest)).
+
+updatenext(forward, X, Y, rsouth) :- D is Y-1,safe(X,D), retractall(nextloc(_,_,_)), asserta(nextloc(X,D,rsouth)).
+
+updatenext(turnleft, X, Y, rnorth) :-  retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rwest)).
+
+updatenext(turnleft, X, Y, reast) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rnorth)).
+
+updatenext(turnleft, X, Y, rwest) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rsouth)).
+
+updatenext(turnleft, X, Y, rsouth) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,reast)).
+
+updatenext(turnright, X, Y, rnorth) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,reast)).
+
+updatenext(turnright, X, Y, reast) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rsouth)).
+
+updatenext(turnright, X, Y, rwest) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rnorth)).
+
+updatenext(turnright, X, Y, rsouth) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rwest)).
+
+updatenext(pickup, X, Y, Z) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,Z)).
+
+updatenext(shoot, X, Y, Z) :- retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,Z)).
+
+
+
+
+
+/*explore([H|T]) :-   current(X,Y,Z),
+                    assertz(testcurrent(X,Y,Z)),
+                    testsafe(H,X,Y,Z),
+                    write(H),
+                    explore2(T).
+
+explore2([H|T]):- testcurrent(X,Y,Z),
+                  testsafe(H,X,Y,Z),
+                  write(H),
+                  explore2(T).
+
+testsafe(H,X,Y,Z) :- go(H).
+
+go(forward):- testcurrent(X,Y,Z),
+              orientation(Z).
+
+orientation(rnorth):- testcurrent(X,Y,Z),
+                        write("testing"),
+                        D is Y+1,
+                        retractall(testcurrent(_,_,_)),
+                        assertz(testcurrent(X,D,Z)).
+
+orientation(reast):- testcurrent(X,Y,Z),
+                     D is X+1,
+                     retractall(testcurrent(_,_,_)),
+                     assertz(testcurrent(D,Y,Z)).
+
+orientation(rsouth):- testcurrent(X,Y,Z),
+                        D is Y-1,
+                        retractall(testcurrent(_,_,_)),
+                        assertz(testcurrent(X,D,Z)).
+
+orientation(rwest):- testcurrent(X,Y,Z),
+                     D is X-1,
+                     retractall(testcurrent(_,_,_)),
+                     assertz(testcurrent(D,Y,Z)).
+
+go(turnright):- testcurrent(X,Y,Z),
+                orientation(Z).
+
+orientation(rnorth):- testcurrent(X,Y,Z),
+                      retractall(testcurrent(_,_,_)),
+                      assertz(testcurrent(X,Y,reast)).
+
+orientation(reast):- testcurrent(X,Y,Z),
+                     retractall(testcurrent(_,_,_)),
+                     assertz(testcurrent(X,Y,rsouth)).
+
+orientation(rsouth):- testcurrent(X,Y,Z),
+                     retractall(testcurrent(_,_,_)),
+                     assertz(testcurrent(X,Y,rwest)).
+
+orientaton(rwest):- testcurrent(X,Y,Z),
+                    retractall(testcurrent(_,_,_)),
+                    assertz(testcurrent(X,Y,rnorth)).
+
+go(turnleft):- testcurrent(X,Y,Z),
+                orientation(Z).
+
+orientation(rnorth):- testcurrent(X,Y,Z),
+                      retractall(testcurrent(_,_,_)),
+                      assertz(testcurrent(X,Y,rwest)).
+ 
+orientation(reast):- testcurrent(X,Y,Z),
+                     retractall(testcurrent(_,_,_)),
+                     assertz(testcurrent(X,Y,rnorth)).
+
+orientation(rsouth):- testcurrent(X,Y,Z),
+                     retractall(testcurrent(_,_,_)),
+                     assertz(testcurrent(X,Y,reast)).
+                    
+orientaton(rwest):- testcurrent(X,Y,Z),
+                    retractall(testcurrent(_,_,_)),
+                    assertz(testcurrent(X,Y,rsouth)).
+*/
+
+
+                
 

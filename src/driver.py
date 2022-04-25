@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
 
 
-    loc11 = list(agent.prolog.query("listing(possible_portal)"))
+    loc11 = list(agent.prolog.query("listing(confoundus)"))
     print(loc11)
 
     agent.move("moveforward", [0, 0, 1, 0, 0, 0])  # testing portal
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     loc11 = list(agent.prolog.query("listing(tingle)"))
     print(loc11)
 
-    loc11 = list(agent.prolog.query("listing(possible_portal)"))
+    loc11 = list(agent.prolog.query("listing(confoundus)"))
     print(loc11)
 
 
@@ -108,6 +108,8 @@ if __name__ == "__main__":
 
     loc11 = list(agent.prolog.query("listing(glitter)"))
     print(loc11)
+    print(bool(list(agent.prolog.query("explore([forward,forward,forward])"))))
+    #print((list(agent.prolog.query("explore([X])"))))
 
 
     # spawn agent on absolute map
