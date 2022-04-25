@@ -1,4 +1,5 @@
 
+from re import S
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
 
@@ -6,7 +7,7 @@ SENSORY_CONSTANTS = ['confounded', 'stench',
                      'tingle', 'glitter', 'bump', 'scream']
 ACTION_CONSTANTS = ['shoot', 'moveforward', 'turnleft', 'turnright', 'pickup']
 DIRECTION_CONSTANTS = ['rnorth', 'rsouth', 'reast', 'rwest', '_']
-
+DIR_LEGENDS = {'rnorth':'^','rsouth':'v','reast':'>','rwest':'<'}
 
 class Agent:
     def __init__(self, coin_count) -> None:
@@ -94,6 +95,7 @@ class Agent:
         return self.prolog.query(f"wumpus({x},{y})")
 
     def confundus(self, x: int, y: int) -> bool:
+        #check if given cell has a possibility of confundus
         return self.prolog.query(f"confundus({x},{y})")
 
     def tingle(self, x: int, y: int) -> bool:
@@ -145,6 +147,95 @@ class Agent:
         values_list = list(dic.values())
         print(values_list)
         return values_list[2]
+    
+    def print_relative_map(self,sensory_list):
+        cells = self.get_all_visited() + self.get_all_safe_cells()
+        max_x = 0
+        min_x = 0
+        max_y = 0
+        min_x = 0
+        for cell in cells:
+            max_x = max(max_x,cell[0])
+            min_x = min(min_x,cell[0])
+            max_y = max(max_y,cell[1])
+            min_y = min(min_y,cell[1])
+        
+        for y in range(max_y,min_y-1,-1):
+            for x in range(min_x,max_x+1):
+
+                s1 = '.'
+                s2 = '.'
+                s3 = '.'
+                if self.wall(x,y):
+                    print("# # #",end='')
+                    continue
+                elif self.current(x,y):# not sure if this a problem
+                    if sensory_list[0]:
+                        s1 = '%'
+                    if sensory_list[1]:
+                        s2 = '='
+                    if sensory_list[3]:
+                        s3 = 'T'
+                    print(f"{s1} {s2} {s3}", end='')
+                    continue
+
+                if self.stench(x,y):
+                    s2 = '='
+                if self.tingle(x,y):
+                    s3 = 'T'
+                print(f"{s1} {s2} {s3}", end='')
+
+
+            for x in range(min_x,max_x+1):
+                s4 = s6 = ' '
+                s5 = '?'
+                if self.wall(x,y):
+                    print("# # #",end='')
+                    continue
+                elif self.current(x,y):# not sure if this a problem
+                    print(f"- {DIR_LEGENDS[self.get_current_direction()]} -", end='')
+                    continue
+
+                wumpus = self.wumpus(x,y)
+                portal = self.confundus(x,y)
+
+                if wumpus or portal:
+                    s4 = s6 ='-'
+
+                if wumpus and portal:
+                    s5 = 'U'
+                elif wumpus:
+                    s5 = 'W'
+                elif portal:
+                    s5 = 'O'
+                print(f"{s4} {s5} {s6}", end='')
+
+
+
+            for x in range(min_x,max_x+1):
+                s7 = '.'
+                s8 = '.'
+                s9 = '.'
+                if self.wall(x,y):
+                    print('# # #',end='')
+                    continue
+                elif self.current(x,y):# not sure if this a problem
+                    if sensory_list[3]:
+                        s7 = '*'
+                    if sensory_list[1]:
+                        s8 = 'B'
+                    if sensory_list[3]:
+                        s9 = '@'
+                    print(f"{s7} {s8} {s9}", end='')
+                    continue
+                
+                if self.glitter(x,y):
+                    s7 = '*'
+                print(f"{s7} {s8} {s9}", end='')
+                
+
+
+        pass
 
 
 if __name__ == "__main__":

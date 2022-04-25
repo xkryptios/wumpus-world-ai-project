@@ -1,7 +1,3 @@
-from logging.handlers import RotatingFileHandler
-from multiprocessing.sharedctypes import Value
-import string
-from typing import final
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
 from agent import Agent
@@ -147,6 +143,7 @@ def get_turns(i, f, d) -> tuple:
     return turn_list, final_direction
 
 
+
 if __name__ == "__main__":
     # initialise agent and map
     g = Grid(6, 6)
@@ -154,6 +151,8 @@ if __name__ == "__main__":
 
     g.display_grid()
     # agent.reborn()
+
+    
 
     # check if there is still safe cells
     unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
@@ -168,6 +167,7 @@ if __name__ == "__main__":
         visited_list.append(end_location)
         action_list = find_path(start_location, end_location, visited_list)
         print(convert_cell_to_action(action_list,agent.get_current_direction()))
+
         break
 
         # if agent confirm the path is safe
