@@ -213,17 +213,43 @@ move(moveforward, [C, S, T, G, B, SC]) :- current(X,Y,Z),
 
 move(moveforward, [C, S, T, G, B, SC]):- S = off,
                                         T = off,
-                                        G = off,
                                         B = off,
                                         current(X,Y,Z),
-                                        D is X+1,
-                                        assertz(safe(D,Y)),
+                                        assign_safe(Z).
+
+assign_safe(rnorth) :-                  current(X,Y,Z),
+                                        D is Y+1,  %y is up down , x is left right
+                                        assertz(safe(X,Y)),
                                         E is X-1,
                                         assertz(safe(E,Y)),
-                                        F is Y+1,
-                                        assertz(safe(X,F)),
-                                        G is Y-1,
-                                        assertz(safe(X,G)).
+                                        F is X+1,
+                                        assertz(safe(F,Y)).
+
+assign_safe(reast) :-                  current(X,Y,Z),
+                                        D is Y+1,  %y is up down , x is left right
+                                        assertz(safe(X,Y)),
+                                        E is Y-1,
+                                        assertz(safe(X,E)),
+                                        F is X+1,
+                                        assertz(safe(F,Y)).
+
+assign_safe(rsouth) :-                  current(X,Y,Z),
+                                        D is Y-1,  %y is up down , x is left right
+                                        assertz(safe(X,Y)),
+                                        E is X-1,
+                                        assertz(safe(E,Y)),
+                                        F is X+1,
+                                        assertz(safe(F,Y)).
+
+assign_safe(rwest) :-                  current(X,Y,Z),
+                                        D is Y+1,  %y is up down , x is left right
+                                        assertz(safe(X,Y)),
+                                        E is X-1,
+                                        assertz(safe(E,Y)),
+                                        F is Y-1,
+                                        assertz(safe(X,Y)).
+
+
 
 
                                          
@@ -243,12 +269,19 @@ assignbwumpus(rnorth) :-   current(X,Y,Z),
 
 assignbwumpus(reast) :-     current(X,Y,Z),
                             write("i sense a wumpus in the forces\n"),
+                            check_wumpus(X,Y),
                             D is X+1,
                             assertz(possible_wumpus(D,Y)), %y is up down , x is left right
                             E is Y+1,
                             assertz(possible_wumpus(X,E)),
                             F is Y-1,
                             assertz(possible_wumpus(X,F)).
+
+check_wumpus(X,Y) :- D is X-1,
+                     possible_wumpus(D,Y),
+                     assertz(wumpus(D,Y)),
+                     write("wumpus assigned to "),
+                     write(D),write(",",write(Y)).
 
 assignbwumpus(rwest) :-     current(X,Y,Z),
                             D is X-1,

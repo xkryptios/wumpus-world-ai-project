@@ -34,6 +34,20 @@ if __name__ == "__main__":
     loc4 = list(agent.currentpos())
     print(loc4)
 
+
+    print("tesing wumpus assignment\n")
+    agent.move("moveforward", [0, 0, 0, 0, 0, 0])
+    print(list(agent.currentpos()))
+
+    agent.move("turnleft", [0, 0, 0, 0, 0, 0])
+    print(list(agent.currentpos()))
+
+    agent.move("moveforward", [0, 1, 0, 0, 0, 0])
+    print(list(agent.currentpos()))
+
+
+
+
     agent.move("moveforward", [0, 0, 1, 0, 0, 0])  # testing portal
     loc5 = list(agent.currentpos())
     print(loc5)
