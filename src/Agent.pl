@@ -274,8 +274,8 @@ assign_safe(rnorth) :-  current(X,Y,Z),
                          D is Y+1,  %y is up down , x is left right
                         (wumpus(X,D)),
                         not(confundus(X,D)),
-                        assertz(safe(X,D)),
-                        retract(wumpus(X,D)).
+                        retract(wumpus(X,D)),
+                        assertz(safe(X,D)).
 assign_safe(rnorth) :-  current(X,Y,Z),
                          D is Y+1,  %y is up down , x is left right
                         not(wumpus(X,D)),
@@ -628,7 +628,7 @@ check_wumpus(reast) :- current(X,Y,Z),
                      retractall(semophore()).
 
 check_wumpus(reast) :- current(X,Y,Z),
-                        D is X-1,
+                        D is X+1,
                      wumpus(D,Y),
                      retractall(wumpus(_,_)),
                      assertz(wumpus(D,Y)),
@@ -636,9 +636,9 @@ check_wumpus(reast) :- current(X,Y,Z),
 
 check_wumpus(reast) :- current(X,Y,Z),
                         D is Y-1,
-                     wumpus(D,Y),
+                     wumpus(X,D),
                      retractall(wumpus(_,_)),
-                     assertz(wumpus(D,Y)),
+                     assertz(wumpus(X,D)),
                      retractall(semophore()).
 
 

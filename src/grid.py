@@ -7,6 +7,8 @@ SENSORY_CONSTANTS = ['confounded', 'stench',
 ACTION_CONSTANTS = ['shoot', 'moveforward', 'turnleft', 'turnright', 'pickup']
 DIRECTION_CONSTANTS = ['rnorth', 'rsouth', 'reast', 'rwest']
 
+RESPAWN = False
+
 
 class Grid:
     def __init__(self, x, y):
@@ -38,6 +40,7 @@ class Grid:
         self.spawn_agent()
 
     def display_grid(self):
+        print('\n\n')
         for i in range(self.y - 1, -1, -1):
             for j in range(self.x):
                 self.grid[i][j].print_cell_l1()
@@ -68,11 +71,12 @@ class Grid:
         print(npcs)
 
         # self.set_wumpus_location(npcs[0][0],npcs[0][1])
-        self.set_wumpus_location(4,3)
+        self.set_wumpus_location(1,3)
         # self.set_coin_location(npcs[1][0],npcs[1][1])
-        self.set_coin_location(3,3)
+        self.set_coin_location(2,3)
         # self.set_portal_location(npcs[2][0],npcs[2][1])
-        self.set_portal_location(3,4)
+        self.set_portal_location(4,1)
+        self.set_portal_location(3,5)
 
 
         # self.spawn_agent()
@@ -160,6 +164,7 @@ class Grid:
 
         # check if wumpus
         elif self.grid[new_position[1]][new_position[0]].is_wumpus():
+            RESPAWN = True
             return self.reset_game()
 
         # check if is portal
@@ -263,9 +268,10 @@ class Grid:
 if __name__ == "__main__":
     g = Grid(6, 6)
     g.display_grid()
-    sensory = g.spawn_agent()
-    g.display_grid()
-    print(sensory)
+    print("confound,stench,tingle,glitter,bumpp,scream")
+    print([True,False,False,False,False,False])
+
+
 
     cmd = ['l', 'r', 'f', 's', 'p']
     while True:
@@ -284,5 +290,5 @@ if __name__ == "__main__":
             slist = g.agent_move_forward()
 
         g.display_grid()
-        print("confou,stench,tingle,glitte,bumppp,scream")
+        print("confound,stench,tingle,glitter,bumpp,scream")
         print(slist)

@@ -1,7 +1,7 @@
-from typing import final
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
 from agent import CONVERT_BOOL, Agent
+ACTIONS ={'l':'turnleft','r':'turnright','s':'shoot','p':'pickup','f':'moveforward'}
 
 
 def find_path(start, end, visited_list):
@@ -153,73 +153,157 @@ def display_sensory(a='',S=[False,False,False,False,False,False]):
     print(f'LAST MOVE : {a.upper()}')
 
 
+class Driver():
+    def __init__(self) -> None:
+        self.gui()
 
-if __name__ == "__main__":
-    # initialise agent and map
-    g = Grid(6, 6)
-    agent = Agent(1)
-
-    g.display_grid()
-    # agent.reborn()
-   
-    # # check if there is still safe cells
-    unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
-    display_sensory()
-    agent.print_relative_map()
-    input()
-    while len(unvisited_safe_cell_list) != 0:
-        # ask grid to get a list of action
-        # visited_list = agent.get_all_visited()
-        traversible_nodes = agent.get_traversible_nodes()
-        end_location = unvisited_safe_cell_list.pop()
-        start_location = agent.get_current_location()
-        traversible_nodes.append(end_location)
-        path_list = find_path(start_location, end_location, traversible_nodes)
-        action_list = convert_cell_to_action(path_list,agent.get_current_direction())
-        
-        # if agent.explore(action_list):
-        for action in action_list:
-            # moving of agent
-            sensory_list = g.move(action)
-            agent.move(action,sensory_list)
-
-            # displaying of grid
-            display_sensory(action,sensory_list)
-            agent.print_relative_map(sensory_list)
-            g.display_grid()
-            input()
-        unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
-
-        # check if current location has coin
-        if sensory_list[3]:
-            sensory_list = g.move('pickup')
-            agent.move('pickup',sensory_list)
-            agent.print_relative_map(sensory_list)
-            g.display_grid()
-            input()
-
-
+    def gui(self):
+        ans = ['1','2','3','4']
+        a = ''
+        while True:
+            print("enter a viable input (1-3)")
+            print("1 :Run on grid manually ")
+            print("2 :Let AI explore the grid by itself")
+            print("3 :Test relocation and reborn functionality")
+            print('4 : exit program')
+            a = input()
+            print()
+            if a not in ans:
+                continue
+            break
             
+        if a == '1':
+            self.manual()
+        elif a == '2':
+            self.runai()
+        elif a == '3':
+            self.testreloc()
+        elif a == '4':
+            exit()
+    def manual(self):
+        g = Grid(6, 7)
+        g.display_grid()
+        print("confound,stench,tingle,glitter,bumpp,scream")
+        print([True,False,False,False,False,False])
 
+
+
+        cmd = ['l', 'r', 'f', 's', 'p']
+        while True:
+            s = input("enter command: Left=l, Right=r, Forward=f , Pickup=p, Shoot=s")
+            if s not in cmd:
+                continue
+            if s == 'l':
+                slist = g.agent_rotate_left()
+            elif s == 'r':
+                slist = g.agent_rotate_right()
+            elif s == 'p':
+                slist = g.agent_pickup()
+            elif s == 's':
+                slist = g.agent_shoot()
+            else:
+                slist = g.agent_move_forward()
+
+            g.display_grid()
+            print("confound,stench,tingle,glitter,bumpp,scream")
+            print(slist)
+    def runai(self):
+        g = Grid(6, 7)
+        agent = Agent(1)
+
+        g.display_grid()
+        # agent.reborn()
+    
+        # # check if there is still safe cells
+        unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+        display_sensory()
+        agent.print_relative_map()
+        input()
+        while len(unvisited_safe_cell_list) != 0:
+            # ask grid to get a list of action
+            # visited_list = agent.get_all_visited()
+            traversible_nodes = agent.get_traversible_nodes()
+            end_location = unvisited_safe_cell_list.pop()
+            start_location = agent.get_current_location()
+            traversible_nodes.append(end_location)
+            path_list = find_path(start_location, end_location, traversible_nodes)
+            action_list = convert_cell_to_action(path_list,agent.get_current_direction())
+            
+            # if agent.explore(action_list):
+            for action in action_list:
+                # moving of agent
+                sensory_list = g.move(action)
+                agent.move(action,sensory_list)
+
+                # displaying of grid
+                display_sensory(action,sensory_list)
+                agent.print_relative_map(sensory_list)
+                input()
+            unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+
+            # check if current location has coin
+            if sensory_list[3]:
+                sensory_list = g.move('pickup')
+                agent.move('pickup',sensory_list)
+                display_sensory('pickup',sensory_list)
+                agent.print_relative_map(sensory_list)
+                input()
+
+
+        #return to (0,0)
+        start_location = agent.get_current_location()
+        traversible_nodes = agent.get_traversible_nodes()
+        path_list = find_path(start_location,(0,0),traversible_nodes)
+        action_list = convert_cell_to_action(path_list,agent.get_current_direction())
+        for action in action_list:
+                # moving of agent
+                sensory_list = g.move(action)
+                agent.move(action,sensory_list)
+
+                # displaying of grid
+                display_sensory(action,sensory_list)
+                agent.print_relative_map(sensory_list)
+                input()
+        print("All explorable cells have been explored!")
+        print("End of exploration")
+    
+    def testreloc(self):
+        g = Grid(6,7)
+        agent = Agent(1)
+        g.display_grid()
+        agent.print_relative_map()
+
+        cmd = ['l', 'r', 'f', 's', 'p']
+        action = ''
+        while True:
+            s = input("enter command: Left=l, Right=r, Forward=f , Pickup=p, Shoot=s")
+            if s not in cmd:
+                continue
+            if s == 'l':
+                slist = g.agent_rotate_left()
+            elif s == 'r':
+                slist = g.agent_rotate_right()
+            elif s == 'p':
+                slist = g.agent_pickup()
+            elif s == 's':
+                slist = g.agent_shoot()
+            else:
+                slist = g.agent_move_forward()
+
+            # g.display_grid()
+            agent.move(ACTIONS[s],slist)
+            agent.print_relative_map(slist)
+            print("confound,stench,tingle,glitter,bumpp,scream")
+            print(slist)
+        
 
     
-    #return to (0,0)
-    start_location = agent.get_current_location()
-    traversible_nodes = agent.get_traversible_nodes()
-    path_list = find_path(start_location,(0,0),traversible_nodes)
-    action_list = convert_cell_to_action(path_list,agent.get_current_direction())
-    for action in action_list:
-            # moving of agent
-            sensory_list = g.move(action)
-            agent.move(action,sensory_list)
 
-            # displaying of grid
-            display_sensory(action,sensory_list)
-            agent.print_relative_map(sensory_list)
-            g.display_grid()
-            input()
-    print("All explorable cells have been explored!")
-    print("End of exploration")
+
+
+
+if __name__ == "__main__":
+    d = Driver()
     
 
 

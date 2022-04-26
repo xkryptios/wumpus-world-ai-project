@@ -1,7 +1,4 @@
-
-from re import S
-from this import d
-from grid import Grid
+from grid import RESPAWN, Grid
 from pyswip import Prolog, Functor, Variable, Query
 
 SENSORY_CONSTANTS = ['confounded', 'stench',
@@ -22,6 +19,15 @@ class Agent:
 
     def move(self, A, L: list) -> None:
         # list = {confounded,stench,tingle,glitter,bump,scream}
+
+        if RESPAWN and L[0]:
+            self.reborn()
+            return
+        elif L[0]:
+            self.reposition(L)
+            return
+
+
         if A not in ACTION_CONSTANTS:
             raise ValueError(f'{A} is not a valid action!')
         q_string = f"move({A}, [{CONVERT_BOOL[L[0]]},{CONVERT_BOOL[L[1]]},{CONVERT_BOOL[L[2]]},{CONVERT_BOOL[L[3]]},{CONVERT_BOOL[L[4]]},{CONVERT_BOOL[L[5]]}])."
