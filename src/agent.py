@@ -24,9 +24,7 @@ class Agent:
         # list = {confounded,stench,tingle,glitter,bump,scream}
         if A not in ACTION_CONSTANTS:
             raise ValueError(f'{A} is not a valid action!')
-        # q_string = f"move({A}, [{CONVERT_BOOL[L[0]]},{CONVERT_BOOL[L[1]]},{CONVERT_BOOL[L[2]]},{CONVERT_BOOL[L[3]]},{CONVERT_BOOL[L[4]]},{CONVERT_BOOL[L[5]]}])"
         q_string = f"move({A}, [{CONVERT_BOOL[L[0]]},{CONVERT_BOOL[L[1]]},{CONVERT_BOOL[L[2]]},{CONVERT_BOOL[L[3]]},{CONVERT_BOOL[L[4]]},{CONVERT_BOOL[L[5]]}])."
-        print(q_string)
         list(self.prolog.query(q_string))
         # print(res)
 
@@ -45,8 +43,8 @@ class Agent:
 
         s = s[0:-2]
         q_string = f"explore([{s}])"
-        print(q_string)
-        return list(self.prolog.query(q_string))
+        # print(q_string)
+        return bool(list(self.prolog.query(q_string)))
 
     def current(self, x: int, y: int, d='_') -> bool:
         if d not in DIRECTION_CONSTANTS:
@@ -106,7 +104,6 @@ class Agent:
         visited = self.get_all_visited()
         wall = self.get_all_wall()
         unvisited_safe = [cell for cell in safe if( cell not in visited and cell not in wall)]
-        print("unvisited safe cells:",unvisited_safe)
         return unvisited_safe
 
     def get_current_location(self) -> tuple:
@@ -134,11 +131,6 @@ class Agent:
         for i in list_of_dict:
             coordinate_list.append(tuple(i.values()))
         coordinate_list = list( dict.fromkeys(coordinate_list) )
-        for i in coordinate_list:
-            if type(i[0]) != int or type(i[0]) != int:
-                print('get all ',self.get_all_safe_cells)
-                print(list(self.prolog.query(f"confundus(X,Y)")))
-                raise ValueError('weird tuple created')
         return coordinate_list
 
     def get_all_wall(self):
@@ -151,7 +143,6 @@ class Agent:
     
     def print_relative_map(self,sensory_list=[True,False,False,False,False,False]):
         cells = self.get_all_visited() + self.get_all_safe_cells() + self.get_all_portal() + self.get_all_wall() +self.get_all_wumpus()
-        print(self.get_all_portal())
         max_x = 0
         min_x = 0
         max_y = 0
@@ -176,7 +167,7 @@ class Agent:
                         s1 = '%'
                     if sensory_list[1]:
                         s2 = '='
-                    if sensory_list[3]:
+                    if sensory_list[2]:
                         s3 = 'T'
                     print(f"{s1} {s2} {s3}", end=' | ')
                     continue
@@ -206,10 +197,8 @@ class Agent:
                 safe = self.safe(x,y)
                 visited = self.visited(x,y)
 
-                if safe:
-                    s4 = 's'
                 if wumpus or portal :
-                    s6 ='-'
+                    s4 = s6 ='-'
 
                 if wumpus and portal:
                     s5 = 'U'

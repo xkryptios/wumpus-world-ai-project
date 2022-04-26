@@ -72,16 +72,12 @@ def convert_cell_to_action(path: list, initial_d):
     # turn to the location
     last_direction = initial_d
     # move forward
-    print('new path!',path)
     for i in range(len(path)-1):
         # [1 ,2 ,3,4]
         init_cell = path[i]
         final_cell = path[i+1]
-        print(init_cell,final_cell)
         turns, last_direction = get_turns(
             init_cell, final_cell, last_direction)
-        print("testing last dir",last_direction,'turns:',turns)
-        # print(init_cell,'->',final_cell)
         action_list += turns
         action_list.append('moveforward')
     return action_list
@@ -149,11 +145,12 @@ def get_turns(i, f, d) -> tuple:
             f'Invalid cell pair! {i}, {f} are not adjacent cells!')
     return turn_list, final_direction
 
-def display_sensory(S=[False,False,False,False,False,False]):
+def display_sensory(a='',S=[False,False,False,False,False,False]):
     print('\n\n------------------------------------------------------------------------------')
-    print('| CONFOUNDED |   STENCH   |   TINGLE   |  GLITTER   |    BUMP    |   SCREAM   |')
-    print(f'    {CONVERT_BOOL[S[0]]}           {CONVERT_BOOL[S[1]]}          {CONVERT_BOOL[S[2]]}          {CONVERT_BOOL[S[3]]}          {CONVERT_BOOL[S[4]]}          {CONVERT_BOOL[S[5]]}   ')
+    print('| CONFOUNDED     STENCH       TINGLE      GLITTER        BUMP        SCREAM   |')
+    print(f'|   {CONVERT_BOOL[S[0]]}           {CONVERT_BOOL[S[1]]}          {CONVERT_BOOL[S[2]]}          {CONVERT_BOOL[S[3]]}          {CONVERT_BOOL[S[4]]}          {CONVERT_BOOL[S[5]]}     |')
     print('------------------------------------------------------------------------------')
+    print(f'LAST MOVE : {a.upper()}')
 
 
 
@@ -234,15 +231,36 @@ if __name__ == "__main__":
         traversible_nodes.append(end_location)
         path_list = find_path(start_location, end_location, traversible_nodes)
         action_list = convert_cell_to_action(path_list,agent.get_current_direction())
-        for action in action_list:
+        
+        print(action_list)
+        if agent.explore(action_list):
+            for action in action_list:
+                # moving of agent
+                sensory_list = g.move(action)
+                agent.move(action,sensory_list)
+
+                # displaying of grid
+                display_sensory(action,sensory_list)
+                agent.print_relative_map(sensory_list)
+                input()
+            unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+    
+    #return to initial grid
+    start_location = agent.get_current_location()
+    traversible_nodes = agent.get_traversible_nodes()
+    path_list = find_path(start_location,(0,0),traversible_nodes)
+    action_list = convert_cell_to_action(path_list,agent.get_current_direction())
+    for action in action_list:
             # moving of agent
             sensory_list = g.move(action)
             agent.move(action,sensory_list)
 
             # displaying of grid
-            display_sensory(sensory_list)
+            display_sensory(action,sensory_list)
             agent.print_relative_map(sensory_list)
-            print(agent.get_all_visited())
             input()
-        unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+    print("All explorable cells have been explored!")
+    print("End of exploration")
+    
+
 
