@@ -1,12 +1,17 @@
+from typing import final
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
-from agent import Agent
+from agent import CONVERT_BOOL, Agent
 
 
 def find_path(start, end, visited_list):
     if start not in visited_list or end not in visited_list:
-        raise ValueError(
-            f'start {start} or end {end} is not in visited list queried from AGENT!')
+        if start not in visited_list:
+            raise ValueError(
+                f'start {start} node not in visited list queried from AGENT!')
+        else:
+            raise ValueError(
+                f'end {end} node not in visited list queried from AGENT!')
     # initialise graph in adj list
     adj = {}
     for i in visited_list:
@@ -36,10 +41,8 @@ def find_path(start, end, visited_list):
         if cur_node in visited:
             continue
         visited.append(cur_node)
-        print(f"{cur_node} is being expanded")
 
         if cur_node == end:
-            print('path found')
             break
 
         adj_nodes = adj[cur_node]
@@ -63,19 +66,22 @@ def find_path(start, end, visited_list):
     return path_list
 
 
-def convert_cell_to_action(path: list, initial_d: string):
+def convert_cell_to_action(path: list, initial_d):
     action_list = []
 
     # turn to the location
     last_direction = initial_d
     # move forward
-
+    print('new path!',path)
     for i in range(len(path)-1):
         # [1 ,2 ,3,4]
         init_cell = path[i]
         final_cell = path[i+1]
+        print(init_cell,final_cell)
         turns, last_direction = get_turns(
             init_cell, final_cell, last_direction)
+        print("testing last dir",last_direction,'turns:',turns)
+        # print(init_cell,'->',final_cell)
         action_list += turns
         action_list.append('moveforward')
     return action_list
@@ -95,6 +101,7 @@ def get_turns(i, f, d) -> tuple:
         elif d == 'rwest':
             turn_list.append('turnleft')
         else:
+            print(type(d),d)
             raise ValueError(f'invalid direction {d}')
         final_direction = 'rsouth'
     elif i[0] == f[0] and i[1] == f[1]-1:  # target cell above
@@ -136,11 +143,17 @@ def get_turns(i, f, d) -> tuple:
             turn_list.append('turnleft')
         else:
             raise ValueError(f'invalid direction {d}')
+        final_direction = 'reast'
     else:
         raise ValueError(
             f'Invalid cell pair! {i}, {f} are not adjacent cells!')
-        final_direction = 'reast'
     return turn_list, final_direction
+
+def display_sensory(S=[False,False,False,False,False,False]):
+    print('\n\n------------------------------------------------------------------------------')
+    print('| CONFOUNDED |   STENCH   |   TINGLE   |  GLITTER   |    BUMP    |   SCREAM   |')
+    print(f'    {CONVERT_BOOL[S[0]]}           {CONVERT_BOOL[S[1]]}          {CONVERT_BOOL[S[2]]}          {CONVERT_BOOL[S[3]]}          {CONVERT_BOOL[S[4]]}          {CONVERT_BOOL[S[5]]}   ')
+    print('------------------------------------------------------------------------------')
 
 
 
@@ -152,52 +165,84 @@ if __name__ == "__main__":
     g.display_grid()
     # agent.reborn()
 
-    
+    # prolog = Prolog()
+    # prolog.consult('Agent.pl')
+    # print('current:')
+    # print(bool((list(prolog.query('current(0,0,_)')))))
+    # print(list(prolog.query('current(X,Y,D)')))
 
-    # check if there is still safe cells
+    # print('arrow:')
+    # print(bool(list(prolog.query('hasarrow()'))))
+
+    # print('visited:')
+    # print(bool(list(prolog.query('visited(0,0)'))))
+    # print(list(prolog.query('visited(X,Y)')))
+    
+    # print('wumpus:')
+    # print(bool(list(prolog.query('wumpus(0,0)'))))
+    # print(list(prolog.query('wumpus(X,Y)')))
+
+    # print('wall:')
+    # print(bool(list(prolog.query('wall(0,0)'))))
+    # print(list(prolog.query('wall(X,Y)')))
+
+    # print('confundus:')
+    # print(bool(list(prolog.query('confundus(0,0)'))))
+    # print(list(prolog.query('confundus(X,Y)')))
+
+    # print('tingle:')
+    # print(bool(list(prolog.query('tingle(0,0)'))))
+    # print(list(prolog.query('tingle(X,Y)')))
+
+    # print('glitter:')
+    # print(bool(list(prolog.query('glitter(0,0)'))))
+    # print(list(prolog.query('glitter(X,Y)')))
+
+    # print('stench:')
+    # print(bool(list(prolog.query('stench(0,0)'))))
+    # print(list(prolog.query('stench(X,Y)')))
+
+    # print('safe:')
+    # print(bool(list(prolog.query('safe(0,0)'))))
+    # print(list(prolog.query('safe(X,Y)')))
+
+    # print('\n\n')
+    # print(agent.has_agent(0,0))
+    # print(agent.get_current_location())
+    # print(agent.get_current_direction())
+    # agent.move('turnleft',[False,False,False,False,False,False])
+    # print(agent.get_current_location())
+    # print(agent.get_current_direction())
+    # agent.move('moveforward',[False,False,False,False,False,False])
+    # print(agent.get_current_location())
+    # print(agent.get_current_direction())
+
+
+
+    
+    # # check if there is still safe cells
     unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+    display_sensory()
+    agent.print_relative_map()
+    input()
     while len(unvisited_safe_cell_list) != 0:
         # ask grid to get a list of action
-        visited_list = agent.get_all_visited()
-        print('visited list: ',visited_list)
+        # visited_list = agent.get_all_visited()
+        traversible_nodes = agent.get_traversible_nodes()
         end_location = unvisited_safe_cell_list.pop()
-        print('end',end_location)
         start_location = agent.get_current_location()
-        print('start: ',start_location)
-        visited_list.append(end_location)
-        action_list = find_path(start_location, end_location, visited_list)
-        print(convert_cell_to_action(action_list,agent.get_current_direction()))
+        traversible_nodes.append(end_location)
+        path_list = find_path(start_location, end_location, traversible_nodes)
+        action_list = convert_cell_to_action(path_list,agent.get_current_direction())
+        for action in action_list:
+            # moving of agent
+            sensory_list = g.move(action)
+            agent.move(action,sensory_list)
 
-        break
+            # displaying of grid
+            display_sensory(sensory_list)
+            agent.print_relative_map(sensory_list)
+            print(agent.get_all_visited())
+            input()
+        unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
 
-        # if agent confirm the path is safe
-        # if agent.explore(action_list):
-        #     for action in action_list:
-        #         sensory_list = g.move(action)  # get sensory from the grid map
-        #         # tell agent movement is made and update sensory
-        #         agent.move(action, sensory_list)
-        # check current place gt coin, if yes pickup
-        # if g.check_for_coin_in_current_cell():
-
-    # get back to origin
-    # origin = {'X': 0, 'Y': 0}
-    # start_location = agent.get_current_location()
-    # action_list = find_path(start_location, origin)
-    # if agent.explore(action_list):
-    #     for action in action_list:
-    #         sensory_list = g.move(action)
-    #         agent.move(action, sensory_list)
-
-    # # finish exploration
-    # print("end of exploration")
-    # g.display_grid()
-
-    # safe_list = [(-1, 2), (1, 2)]
-    # visited_list = [(0, 1), (0, 0), (0, -1), (-1, 0), (1, 0), (0, 2), (-1, 2)]
-    # start = (0, 0)
-    # end = (-1, 2)
-    # res = find_path(start, end, visited_list)
-    # i_d = 'reast'
-    # print(res)
-    # actions = convert_cell_to_action(res, i_d)
-    # print(actions)

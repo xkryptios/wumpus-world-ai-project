@@ -34,6 +34,7 @@ class Grid:
                     self.grid[i][j].set_wall()
         self.agent_current_cell = None
         self.initialise_npcs()
+        self.spawn_agent()
 
     def display_grid(self):
         for i in range(self.y - 1, -1, -1):

@@ -1,5 +1,6 @@
 
 from re import S
+from this import d
 from grid import Grid
 from pyswip import Prolog, Functor, Variable, Query
 
@@ -8,6 +9,7 @@ SENSORY_CONSTANTS = ['confounded', 'stench',
 ACTION_CONSTANTS = ['shoot', 'moveforward', 'turnleft', 'turnright', 'pickup']
 DIRECTION_CONSTANTS = ['rnorth', 'rsouth', 'reast', 'rwest', '_']
 DIR_LEGENDS = {'rnorth':'^','rsouth':'v','reast':'>','rwest':'<'}
+CONVERT_BOOL = {True:'on',False:'off'}
 
 class Agent:
     def __init__(self, coin_count) -> None:
@@ -20,51 +22,17 @@ class Agent:
 
     def move(self, A, L: list) -> None:
         # list = {confounded,stench,tingle,glitter,bump,scream}
-        # convert list of bool to on/off
         if A not in ACTION_CONSTANTS:
             raise ValueError(f'{A} is not a valid action!')
-        confound = 'off'
-        stench = 'off'
-        tingle = 'off'
-        glitter = 'off'
-        bump = 'off'
-        scream = 'off'
-        if L[0]:
-            confound = 'on'
-        if L[1]:
-            stench = 'on'
-        if L[2]:
-            tingle = 'on'
-        if L[3]:
-            glitter = 'on'
-        if L[4]:
-            bump = 'on'
-        if L[5]:
-            scream = 'on'
-        self.prolog.query(
-            f"move({A}, [{confound},{stench},{tingle},{glitter},{bump},{scream}]).")
+        # q_string = f"move({A}, [{CONVERT_BOOL[L[0]]},{CONVERT_BOOL[L[1]]},{CONVERT_BOOL[L[2]]},{CONVERT_BOOL[L[3]]},{CONVERT_BOOL[L[4]]},{CONVERT_BOOL[L[5]]}])"
+        q_string = f"move({A}, [{CONVERT_BOOL[L[0]]},{CONVERT_BOOL[L[1]]},{CONVERT_BOOL[L[2]]},{CONVERT_BOOL[L[3]]},{CONVERT_BOOL[L[4]]},{CONVERT_BOOL[L[5]]}])."
+        print(q_string)
+        list(self.prolog.query(q_string))
+        # print(res)
 
     def reposition(self, L) -> None:
-        confound = 'off'
-        stench = 'off'
-        tingle = 'off'
-        glitter = 'off'
-        bump = 'off'
-        scream = 'off'
-        if L[0]:
-            confound = 'on'
-        if L[1]:
-            stench = 'on'
-        if L[2]:
-            tingle = 'on'
-        if L[3]:
-            glitter = 'on'
-        if L[4]:
-            bump = 'on'
-        if L[5]:
-            scream = 'on'
-        self.prolog.query(
-            f"reposition([{confound},{stench},{tingle},{glitter},{bump},{scream}])")
+        q_string = f"reposition([{CONVERT_BOOL[L[0]]},{CONVERT_BOOL[L[1]]},{CONVERT_BOOL[L[2]]},{CONVERT_BOOL[L[3]]},{CONVERT_BOOL[L[4]]},{CONVERT_BOOL[L[5]]}])"
+        list(self.prolog.query(q_string))
 
     def explore(self, L: list) -> bool:
         # true if list contain sequence of actions that leads agent to a safe+unvisited location
@@ -76,65 +44,69 @@ class Agent:
             s += action + ' ,'
 
         s = s[0:-2]
-        return self.prolog.query(f"explore([{s}])")
+        q_string = f"explore([{s}])"
+        print(q_string)
+        return list(self.prolog.query(q_string))
 
     def current(self, x: int, y: int, d='_') -> bool:
         if d not in DIRECTION_CONSTANTS:
             raise ValueError(f'{d} is not a direction!')
-        # is true if xy is the current relative position and d is current relative orientation of the agent
-        return self.prolog.query(f"current([{x},{y},{d}])")
+        return bool(list(self.prolog.query(f"current({x},{y},{d})")))
 
     def hasarrow(self):
-        return self.prolog.query(f"hasarrow()")
+        return bool(list(self.prolog.query(f"hasarrow()")))
 
     # localisation methods , not sure if is implement here
     def visited(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"visited({x},{y})")
-
-    def wumpus(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"wumpus({x},{y})")
-
-    def confundus(self, x: int, y: int) -> bool:
-        #check if given cell has a possibility of confundus
-        return self.prolog.query(f"confundus({x},{y})")
-
-    def tingle(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"tingle({x},{y})")
-
-    def glitter(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"glitter({x},{y})")
-
-    def stench(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"stench({x},{y})")
-
-    def safe(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"safe({x},{y})")
-
-    def wall(self, x: int, y: int) -> bool:
-        return self.prolog.query(f"wall({x},{y})")
-
-    def has_agent(self, x, y) -> bool:
-        res = list(self.prolog.query(f"agent({x},{y},D)"))
-        return len(res) == 1
-
+        return bool(list(self.prolog.query(f"visited({x},{y})")))
     def get_all_visited(self) -> list:
         list_of_dict = list(self.prolog.query(f"visited(X,Y)"))
         coordinate_list = []
         for i in list_of_dict:
             coordinate_list.append(tuple(i.values()))
+        coordinate_list = list( dict.fromkeys(coordinate_list) )
         return coordinate_list
 
+    def wumpus(self, x: int, y: int) -> bool:
+        return bool(list(self.prolog.query(f"wumpus({x},{y})")))
+
+    def confundus(self, x: int, y: int) -> bool:
+        #check if given cell has a possibility of confundus
+        return bool(list(self.prolog.query(f"confundus({x},{y})")))
+
+    def tingle(self, x: int, y: int) -> bool:
+        return bool(list(self.prolog.query(f"tingle({x},{y})")))
+
+    def glitter(self, x: int, y: int) -> bool:
+        return bool(list(self.prolog.query(f"glitter({x},{y})")))
+
+    def stench(self, x: int, y: int) -> bool:
+        return bool(list(self.prolog.query(f"stench({x},{y})")))
+
+    def safe(self, x: int, y: int) -> bool:
+        return bool(list(self.prolog.query(f"safe({x},{y})")))
     def get_all_safe_cells(self) -> list:
         list_of_dict = list(self.prolog.query("safe(X,Y)"))
         coordinate_list = []
         for i in list_of_dict:
             coordinate_list.append(tuple(i.values()))
+        coordinate_list = list( dict.fromkeys(coordinate_list) )
         return coordinate_list
+
+    def wall(self, x: int, y: int) -> bool:
+        # print(list(self.prolog.query("wall(X,Y)")))
+        return (bool(list(self.prolog.query(f"wall({x},{y})"))))
+
+    def has_agent(self, x, y) -> bool:
+        res = list(self.prolog.query(f"current({x},{y},D)"))
+        return len(res) == 1
 
     def get_all_unvisited_safe_cells(self) -> list:
         safe = self.get_all_safe_cells()
         visited = self.get_all_visited()
-        unvisited_safe = [cell for cell in safe if cell not in visited]
+        wall = self.get_all_wall()
+        unvisited_safe = [cell for cell in safe if( cell not in visited and cell not in wall)]
+        print("unvisited safe cells:",unvisited_safe)
         return unvisited_safe
 
     def get_current_location(self) -> tuple:
@@ -145,15 +117,45 @@ class Agent:
     def get_current_direction(self):
         dic = list(self.prolog.query('current(X,Y,D)'))[0]
         values_list = list(dic.values())
-        print(values_list)
         return values_list[2]
+
+    def get_all_wumpus(self):
+        list_of_dict = list(self.prolog.query(f"wumpus(X,Y)"))
+        coordinate_list = []
+        for i in list_of_dict:
+            coordinate_list.append(tuple(i.values()))
+        coordinate_list = list( dict.fromkeys(coordinate_list) )
+        return coordinate_list
+
+        pass
+    def get_all_portal(self):
+        list_of_dict = list(self.prolog.query(f"confundus(X,Y)"))
+        coordinate_list = []
+        for i in list_of_dict:
+            coordinate_list.append(tuple(i.values()))
+        coordinate_list = list( dict.fromkeys(coordinate_list) )
+        for i in coordinate_list:
+            if type(i[0]) != int or type(i[0]) != int:
+                print('get all ',self.get_all_safe_cells)
+                print(list(self.prolog.query(f"confundus(X,Y)")))
+                raise ValueError('weird tuple created')
+        return coordinate_list
+
+    def get_all_wall(self):
+        list_of_dict = list(self.prolog.query(f"wall(X,Y)"))
+        coordinate_list = []
+        for i in list_of_dict:
+            coordinate_list.append(tuple(i.values()))
+        coordinate_list = list( dict.fromkeys(coordinate_list) )
+        return coordinate_list
     
-    def print_relative_map(self,sensory_list):
-        cells = self.get_all_visited() + self.get_all_safe_cells()
+    def print_relative_map(self,sensory_list=[True,False,False,False,False,False]):
+        cells = self.get_all_visited() + self.get_all_safe_cells() + self.get_all_portal() + self.get_all_wall() +self.get_all_wumpus()
+        print(self.get_all_portal())
         max_x = 0
         min_x = 0
         max_y = 0
-        min_x = 0
+        min_y = 0
         for cell in cells:
             max_x = max(max_x,cell[0])
             min_x = min(min_x,cell[0])
@@ -167,7 +169,7 @@ class Agent:
                 s2 = '.'
                 s3 = '.'
                 if self.wall(x,y):
-                    print("# # #",end='')
+                    print("# # #",end=' | ')
                     continue
                 elif self.current(x,y):# not sure if this a problem
                     if sensory_list[0]:
@@ -176,31 +178,38 @@ class Agent:
                         s2 = '='
                     if sensory_list[3]:
                         s3 = 'T'
-                    print(f"{s1} {s2} {s3}", end='')
+                    print(f"{s1} {s2} {s3}", end=' | ')
                     continue
 
                 if self.stench(x,y):
                     s2 = '='
                 if self.tingle(x,y):
                     s3 = 'T'
-                print(f"{s1} {s2} {s3}", end='')
+                print(f"{s1} {s2} {s3}", end=' | ')
+            print()
 
 
             for x in range(min_x,max_x+1):
                 s4 = s6 = ' '
                 s5 = '?'
                 if self.wall(x,y):
-                    print("# # #",end='')
+                    print("# # #",end=' | ')
                     continue
                 elif self.current(x,y):# not sure if this a problem
-                    print(f"- {DIR_LEGENDS[self.get_current_direction()]} -", end='')
+                    dir = DIR_LEGENDS[self.get_current_direction()]
+                    # print('yoooooooo',dir)
+                    print(f"- {dir} -", end=' | ')
                     continue
 
                 wumpus = self.wumpus(x,y)
                 portal = self.confundus(x,y)
+                safe = self.safe(x,y)
+                visited = self.visited(x,y)
 
-                if wumpus or portal:
-                    s4 = s6 ='-'
+                if safe:
+                    s4 = 's'
+                if wumpus or portal :
+                    s6 ='-'
 
                 if wumpus and portal:
                     s5 = 'U'
@@ -208,7 +217,13 @@ class Agent:
                     s5 = 'W'
                 elif portal:
                     s5 = 'O'
-                print(f"{s4} {s5} {s6}", end='')
+                elif safe and visited:
+                    s5 = 'S'
+                elif safe:
+                    s5 = 's'
+                
+                print(f"{s4} {s5} {s6}", end=' | ')
+            print()
 
 
 
@@ -217,7 +232,7 @@ class Agent:
                 s8 = '.'
                 s9 = '.'
                 if self.wall(x,y):
-                    print('# # #',end='')
+                    print('# # #',end=' | ')
                     continue
                 elif self.current(x,y):# not sure if this a problem
                     if sensory_list[3]:
@@ -226,16 +241,21 @@ class Agent:
                         s8 = 'B'
                     if sensory_list[3]:
                         s9 = '@'
-                    print(f"{s7} {s8} {s9}", end='')
+                    print(f"{s7} {s8} {s9}", end=' | ')
                     continue
                 
                 if self.glitter(x,y):
                     s7 = '*'
-                print(f"{s7} {s8} {s9}", end='')
-                
+                print(f"{s7} {s8} {s9}", end=' | ')
+            print()
+            print('--------'*(max_y-min_y+1))
 
-
-        pass
+    def get_traversible_nodes(self):
+    #get all visited notes, then remove all walls
+        visited = self.get_all_visited()
+        wall = self.get_all_wall()
+        no_wall = [cell for cell in visited if cell not in wall] 
+        return no_wall
 
 
 if __name__ == "__main__":
