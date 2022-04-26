@@ -1,4 +1,5 @@
 # from agent import Agent
+import numpy as np
 from gridcell import GridCell
 import random
 SENSORY_CONSTANTS = ['confounded', 'stench',
@@ -56,11 +57,23 @@ class Grid:
         # suppose to random the location of all the npcs
         # but for now imma do a static location of the npcs
         # need to set 1x wumpus assume
-        self.set_wumpus_location(1, 3)
-        # need to set >= 1 coin
-        self.set_coin_location(4, 3)
-        # need to set >= 1 portal
-        self.set_portal_location(4, 2)
+        npcs = []
+        while len(npcs)!= 3:
+            v1 = random.randint(3,self.x-2)
+            v2 = random.randint(3,self.y-2)
+            pos = (v1,v2)
+            if pos in npcs:
+                continue
+            pos = npcs.append(pos)
+        print(npcs)
+
+        # self.set_wumpus_location(npcs[0][0],npcs[0][1])
+        self.set_wumpus_location(4,3)
+        # self.set_coin_location(npcs[1][0],npcs[1][1])
+        self.set_coin_location(3,3)
+        # self.set_portal_location(npcs[2][0],npcs[2][1])
+        self.set_portal_location(3,4)
+
 
         # self.spawn_agent()
 

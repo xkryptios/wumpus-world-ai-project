@@ -226,9 +226,9 @@ class Agent:
                 elif self.current(x,y):# not sure if this a problem
                     if sensory_list[3]:
                         s7 = '*'
-                    if sensory_list[1]:
+                    if sensory_list[4]:
                         s8 = 'B'
-                    if sensory_list[3]:
+                    if sensory_list[5]:
                         s9 = '@'
                     print(f"{s7} {s8} {s9}", end=' | ')
                     continue

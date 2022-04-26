@@ -161,62 +161,7 @@ if __name__ == "__main__":
 
     g.display_grid()
     # agent.reborn()
-
-    # prolog = Prolog()
-    # prolog.consult('Agent.pl')
-    # print('current:')
-    # print(bool((list(prolog.query('current(0,0,_)')))))
-    # print(list(prolog.query('current(X,Y,D)')))
-
-    # print('arrow:')
-    # print(bool(list(prolog.query('hasarrow()'))))
-
-    # print('visited:')
-    # print(bool(list(prolog.query('visited(0,0)'))))
-    # print(list(prolog.query('visited(X,Y)')))
-    
-    # print('wumpus:')
-    # print(bool(list(prolog.query('wumpus(0,0)'))))
-    # print(list(prolog.query('wumpus(X,Y)')))
-
-    # print('wall:')
-    # print(bool(list(prolog.query('wall(0,0)'))))
-    # print(list(prolog.query('wall(X,Y)')))
-
-    # print('confundus:')
-    # print(bool(list(prolog.query('confundus(0,0)'))))
-    # print(list(prolog.query('confundus(X,Y)')))
-
-    # print('tingle:')
-    # print(bool(list(prolog.query('tingle(0,0)'))))
-    # print(list(prolog.query('tingle(X,Y)')))
-
-    # print('glitter:')
-    # print(bool(list(prolog.query('glitter(0,0)'))))
-    # print(list(prolog.query('glitter(X,Y)')))
-
-    # print('stench:')
-    # print(bool(list(prolog.query('stench(0,0)'))))
-    # print(list(prolog.query('stench(X,Y)')))
-
-    # print('safe:')
-    # print(bool(list(prolog.query('safe(0,0)'))))
-    # print(list(prolog.query('safe(X,Y)')))
-
-    # print('\n\n')
-    # print(agent.has_agent(0,0))
-    # print(agent.get_current_location())
-    # print(agent.get_current_direction())
-    # agent.move('turnleft',[False,False,False,False,False,False])
-    # print(agent.get_current_location())
-    # print(agent.get_current_direction())
-    # agent.move('moveforward',[False,False,False,False,False,False])
-    # print(agent.get_current_location())
-    # print(agent.get_current_direction())
-
-
-
-    
+   
     # # check if there is still safe cells
     unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
     display_sensory()
@@ -232,20 +177,33 @@ if __name__ == "__main__":
         path_list = find_path(start_location, end_location, traversible_nodes)
         action_list = convert_cell_to_action(path_list,agent.get_current_direction())
         
-        print(action_list)
-        if agent.explore(action_list):
-            for action in action_list:
-                # moving of agent
-                sensory_list = g.move(action)
-                agent.move(action,sensory_list)
+        # if agent.explore(action_list):
+        for action in action_list:
+            # moving of agent
+            sensory_list = g.move(action)
+            agent.move(action,sensory_list)
 
-                # displaying of grid
-                display_sensory(action,sensory_list)
-                agent.print_relative_map(sensory_list)
-                input()
-            unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+            # displaying of grid
+            display_sensory(action,sensory_list)
+            agent.print_relative_map(sensory_list)
+            g.display_grid()
+            input()
+        unvisited_safe_cell_list = agent.get_all_unvisited_safe_cells()
+
+        # check if current location has coin
+        if sensory_list[3]:
+            sensory_list = g.move('pickup')
+            agent.move('pickup',sensory_list)
+            agent.print_relative_map(sensory_list)
+            g.display_grid()
+            input()
+
+
+            
+
+
     
-    #return to initial grid
+    #return to (0,0)
     start_location = agent.get_current_location()
     traversible_nodes = agent.get_traversible_nodes()
     path_list = find_path(start_location,(0,0),traversible_nodes)
@@ -258,6 +216,7 @@ if __name__ == "__main__":
             # displaying of grid
             display_sensory(action,sensory_list)
             agent.print_relative_map(sensory_list)
+            g.display_grid()
             input()
     print("All explorable cells have been explored!")
     print("End of exploration")

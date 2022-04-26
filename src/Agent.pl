@@ -270,74 +270,222 @@ assign_safe(rnorth) :-  current(X,Y,Z),
                         not(wumpus(X,D)),
                         not(confundus(X,D)),
                         assertz(safe(X,D)).
+assign_safe(rnorth) :-  current(X,Y,Z),
+                         D is Y+1,  %y is up down , x is left right
+                        (wumpus(X,D)),
+                        not(confundus(X,D)),
+                        assertz(safe(X,D)),
+                        retract(wumpus(X,D)).
+assign_safe(rnorth) :-  current(X,Y,Z),
+                         D is Y+1,  %y is up down , x is left right
+                        not(wumpus(X,D)),
+                        (confundus(X,D)),
+                        assertz(safe(X,D)),
+                        retract(confundus(X,D)).
 
 assign_safe(rnorth):- current(X,Y,Z),
                      E is X-1,
                      not(wumpus(E,Y)),
                      not(confundus(E,Y)),
                      assertz(safe(E,Y)).
+assign_safe(rnorth):- current(X,Y,Z),
+                     E is X-1,
+                     (wumpus(E,Y)),
+                     not(confundus(E,Y)),
+                     assertz(safe(E,Y)),
+                     retract(wumpus(E,Y)).
+
+assign_safe(rnorth):- current(X,Y,Z),
+                     E is X-1,
+                     not(wumpus(E,Y)),
+                     (confundus(E,Y)),
+                     assertz(safe(E,Y)),
+                     retract(confundus(E,Y)).
 
 assign_safe(rnorth):- current(X,Y,Z),
                       F is X+1,
                      not(wumpus(F,Y)),
                      not(confundus(F,Y)),
                      assertz(safe(F,Y)).
-
+assign_safe(rnorth):- current(X,Y,Z),
+                      F is X+1,
+                     (wumpus(F,Y)),
+                     not(confundus(F,Y)),
+                     assertz(safe(F,Y)),
+                     retract(wumpus(F,Y)).
+assign_safe(rnorth):- current(X,Y,Z),
+                      F is X+1,
+                     not(wumpus(F,Y)),
+                     (confundus(F,Y)),
+                     assertz(safe(F,Y)),
+                     retract(confundus(F,Y)).
 
 assign_safe(reast):-  current(X,Y,Z),
                      D is Y+1,  %y is up down , x is left right
-                      not(wumpus(X,D)),
+                     not(wumpus(X,D)),
                      not(confundus(X,D)),
                      assertz(safe(X,D)).
+assign_safe(reast):-  current(X,Y,Z),
+                     D is Y+1,  %y is up down , x is left right
+                     (wumpus(X,D)),
+                     not(confundus(X,D)),
+                     assertz(safe(X,D)),
+                     retract(wumpus(X,D)).
+assign_safe(reast):-  current(X,Y,Z),
+                     D is Y+1,  %y is up down , x is left right
+                     not(wumpus(X,D)),
+                     (confundus(X,D)),
+                     assertz(safe(X,D)),
+                     retract(confundus(X,D)).
 
 assign_safe(reast):- current(X,Y,Z), 
                      E is Y-1,
                      not(wumpus(X,E)),
                      not(confundus(X,E)),
                      assertz(safe(X,E)).
+assign_safe(reast):- current(X,Y,Z), 
+                     E is Y-1,
+                     (wumpus(X,E)),
+                     not(confundus(X,E)),
+                     assertz(safe(X,E)),
+                     retract(wumpus(X,E)).
+assign_safe(reast):- current(X,Y,Z), 
+                     E is Y-1,
+                     not(wumpus(X,E)),
+                     (confundus(X,E)),
+                     assertz(safe(X,E)),
+                     retract(confundus(X,E)).
 
 assign_safe(reast):- current(X,Y,Z), 
                      F is X+1,
                      not(wumpus(F,Y)),
                      not(confundus(F,Y)),
                      assertz(safe(F,Y)).
-
+assign_safe(reast):- current(X,Y,Z), 
+                     F is X+1,
+                     (wumpus(F,Y)),
+                     not(confundus(F,Y)),
+                     assertz(safe(F,Y)),
+                     retract(wumpus(F,Y)).
+assign_safe(reast):- current(X,Y,Z), 
+                     F is X+1,
+                     not(wumpus(F,Y)),
+                     (confundus(F,Y)),
+                     assertz(safe(F,Y)),
+                     retract(confundus(F,Y)).
 
 assign_safe(rsouth):-   current(X,Y,Z), 
                         D is Y-1,
                         not(wumpus(X,D)),
                         not(confundus(X,D)),
                         assertz(safe(X,D)).
+assign_safe(rsouth):-   current(X,Y,Z), 
+                        D is Y-1,
+                        (wumpus(X,D)),
+                        not(confundus(X,D)),
+                        assertz(safe(X,D)),
+                        retract(wumpus(X,D)).
+assign_safe(rsouth):-   current(X,Y,Z), 
+                        D is Y-1,
+                        not(wumpus(X,D)),
+                        (confundus(X,D)),
+                        assertz(safe(X,D)),
+                        retract(confundus(X,D)).
+
 
 assign_safe(rsouth):-   current(X,Y,Z), 
                         E is X-1,
                         not(wumpus(E,Y)),
                         not(confundus(E,Y)),
                         assertz(safe(E,Y)).
+assign_safe(rsouth):-   current(X,Y,Z), 
+                        E is X-1,
+                        (wumpus(E,Y)),
+                        not(confundus(E,Y)),
+                        assertz(safe(E,Y)),
+                        retract(wumpus(E,Y)).
+assign_safe(rsouth):-   current(X,Y,Z), 
+                        E is X-1,
+                        not(wumpus(E,Y)),
+                        (confundus(E,Y)),
+                        assertz(safe(E,Y)),
+                        retract(confundus(E,Y)).
 
 assign_safe(rsouth):-   current(X,Y,Z), 
                         F is X+1,
                         not(wumpus(F,Y)),
                         not(confundus(F,Y)),
                         assertz(safe(F,Y)).
+assign_safe(rsouth):-   current(X,Y,Z), 
+                        F is X+1,
+                        (wumpus(F,Y)),
+                        not(confundus(F,Y)),
+                        assertz(safe(F,Y)),
+                        retract(wumpus(F,Y)).
+assign_safe(rsouth):-   current(X,Y,Z), 
+                        F is X+1,
+                        not(wumpus(F,Y)),
+                        (confundus(F,Y)),
+                        assertz(safe(F,Y)),
+                        retract(confundus(F,Y)).
 
 assign_safe(rwest) :- current(X,Y,Z), 
                         D is Y+1,  %y is up down , x is left right
                         not(wumpus(X,D)),
                         not(confundus(X,D)),
                         assertz(safe(X,D)).
+assign_safe(rwest) :- current(X,Y,Z), 
+                        D is Y+1,  %y is up down , x is left right
+                        (wumpus(X,D)),
+                        not(confundus(X,D)),
+                        assertz(safe(X,D)),
+                        retract(wumpus(X,D)).
+assign_safe(rwest) :- current(X,Y,Z), 
+                        D is Y+1,  %y is up down , x is left right
+                        not(wumpus(X,D)),
+                        (confundus(X,D)),
+                        assertz(safe(X,D)),
+                        retract(confundus(X,D)).
+
 
 assign_safe(rwest) :- current(X,Y,Z), 
                         E is X-1,  %y is up down , x is left right
                         not(wumpus(E,Y)),
                         not(confundus(E,Y)),
                         assertz(safe(E,Y)).
+assign_safe(rwest) :- current(X,Y,Z), 
+                        E is X-1,  %y is up down , x is left right
+                        (wumpus(E,Y)),
+                        not(confundus(E,Y)),
+                        assertz(safe(E,Y)),
+                        retract(wumpus(E,Y)).
+assign_safe(rwest) :- current(X,Y,Z), 
+                        E is X-1,  %y is up down , x is left right
+                        not(wumpus(E,Y)),
+                        (confundus(E,Y)),
+                        assertz(safe(E,Y)),
+                        retract(confundus(E,Y)).
+
 
 assign_safe(rwest) :- current(X,Y,Z), 
                         F is Y-1,  %y is up down , x is left right
                         not(wumpus(X,F)),
                         not(confundus(X,F)),
                         assertz(safe(X,F)).
+assign_safe(rwest) :- current(X,Y,Z), 
+                        F is Y-1,  %y is up down , x is left right
+                        (wumpus(X,F)),
+                        not(confundus(X,F)),
+                        assertz(safe(X,F)),
+                        retract(wumpus(X,F)).
+
+assign_safe(rwest) :- current(X,Y,Z), 
+                        F is Y-1,  %y is up down , x is left right
+                        not(wumpus(X,F)),
+                        (confundus(X,F)),
+                        assertz(safe(X,F)),
+                        retract(confundus(X,F)).
+
 
 %--------------------------------------Assign wumpus--------------------------------
 
@@ -360,30 +508,20 @@ assign_wumpus(rnorth):- current(X,Y,Z),
                         not(safe(X,D)),
                         assertz(wumpus(X,D)).
 
-assign_wumpus(rnorth):- current(X,Y,Z),
-                        D is Y+1,
-                        assertz(wumpus(X,D)),
-                        retract(safe(X,D)).
+
 
 assign_wumpus(rnorth):- current(X,Y,Z),
                         E is X+1,
                         not(safe(E,Y)),
                         assertz(wumpus(E,Y)).
 
-assign_wumpus(rnorth):- current(X,Y,Z),
-                        E is X+1,
-                        assertz(wumpus(E,Y)),
-                        retract(safe(E,Y)).
 
 assign_wumpus(rnorth):- current(X,Y,Z),
                         F is X-1,
                         not(safe(F,Y)),
                         assertz(wumpus(F,Y)).
 
-assign_wumpus(rnorth):- current(X,Y,Z),
-                        F is X-1,
-                        assertz(wumpus(F,Y)),
-                        retract(safe(F,Y)).
+
 
 
 
@@ -393,10 +531,7 @@ assign_wumpus(reast):- current(X,Y,Z),
                         assertz(wumpus(D,Y)).
 
 
-assign_wumpus(reast):- current(X,Y,Z),
-                        D is X+1,
-                        assertz(wumpus(D,Y)),
-                        retract(safe(D,Y)).
+
 
 
 assign_wumpus(reast):- current(X,Y,Z),
@@ -405,10 +540,7 @@ assign_wumpus(reast):- current(X,Y,Z),
                         assertz(wumpus(X,E)).
 
 
-assign_wumpus(reast):- current(X,Y,Z),
-                        E is Y+1,
-                        assertz(wumpus(X,E)),
-                        retract(safe(X,E)).
+
 
 
 assign_wumpus(reast):- current(X,Y,Z),
@@ -417,10 +549,6 @@ assign_wumpus(reast):- current(X,Y,Z),
                         assertz(wumpus(X,F)).
 
 
-assign_wumpus(reast):- current(X,Y,Z),
-                        F is Y-1,
-                        assertz(wumpus(X,F)),
-                        retract(safe(X,F)).
 
 
 assign_wumpus(rsouth):- current(X,Y,Z),
@@ -429,10 +557,6 @@ assign_wumpus(rsouth):- current(X,Y,Z),
                         assertz(wumpus(X,D)).
 
 
-assign_wumpus(rsouth):- current(X,Y,Z),
-                        D is Y-1,
-                        assertz(wumpus(X,D)),
-                        retract(safe(X,D)).
 
 assign_wumpus(rsouth):- current(X,Y,Z),
                         E is X+1,
@@ -440,10 +564,6 @@ assign_wumpus(rsouth):- current(X,Y,Z),
                         assertz(wumpus(E,Y)).
 
 
-assign_wumpus(rsouth):- current(X,Y,Z),
-                        E is X+1,
-                        assertz(wumpus(E,Y)),
-                        retract(safe(E,Y)).
 
 assign_wumpus(rsouth):- current(X,Y,Z),
                         F is X-1,
@@ -451,10 +571,6 @@ assign_wumpus(rsouth):- current(X,Y,Z),
                         assertz(wumpus(F,Y)).
 
 
-assign_wumpus(rsouth):- current(X,Y,Z),
-                        F is X-1,
-                        assertz(wumpus(F,Y)),
-                        retract(safe(F,Y)).
 
 assign_wumpus(rwest):- current(X,Y,Z),
                         D is X-1,
@@ -462,10 +578,6 @@ assign_wumpus(rwest):- current(X,Y,Z),
                         assertz(wumpus(D,Y)).
 
 
-assign_wumpus(rwest):- current(X,Y,Z),
-                        D is X-1,
-                        assertz(wumpus(D,Y)),
-                        retract(safe(D,Y)).
 
 assign_wumpus(rwest):- current(X,Y,Z),
                         E is Y+1,
@@ -474,23 +586,12 @@ assign_wumpus(rwest):- current(X,Y,Z),
 
 
 assign_wumpus(rwest):- current(X,Y,Z),
-                        E is Y+1,
-                        safe(X,E),
-                        assertz(wumpus(X,E)),
-                        retract(safe(X,E)).
-
-assign_wumpus(rwest):- current(X,Y,Z),
                         F is Y-1,
                         not(safe(X,F)),
                         assertz(wumpus(X,F)).
 
 
-assign_wumpus(rwest):- current(X,Y,Z),
-                        F is Y-1,
-                        safe(X,F),
-                        assertz(wumpus(X,F)),
-                        retract(safe(X,F)).
-                        
+
 
 
 
@@ -599,30 +700,21 @@ assign_portal(rnorth):- current(X,Y,Z),
                         not(safe(X,D)),
                         assertz(confundus(X,D)).
 
-assign_portal(rnorth):- current(X,Y,Z),
-                        D is Y+1,
-                        assertz(confundus(X,D)),
-                        retract(safe(X,D)).
+
 
 assign_portal(rnorth):- current(X,Y,Z),
                         E is X+1,
                         not(safe(E,Y)),
                         assertz(confundus(E,Y)).
 
-assign_portal(rnorth):- current(X,Y,Z),
-                        E is X+1,
-                        assertz(confundus(E,Y)),
-                        retract(safe(E,Y)).
+
 
 assign_portal(rnorth):- current(X,Y,Z),
                         F is X-1,
                         not(safe(F,Y)),
                         assertz(confundus(F,Y)).
 
-assign_portal(rnorth):- current(X,Y,Z),
-                        F is X-1,
-                        assertz(confundus(F,Y)),
-                        retract(safe(F,Y)).
+
 
 
 
@@ -632,11 +724,6 @@ assign_portal(reast):- current(X,Y,Z),
                         assertz(confundus(D,Y)).
 
 
-assign_portal(reast):- current(X,Y,Z),
-                        D is X+1,
-                        assertz(confundus(D,Y)),
-                        retract(safe(D,Y)).
-
 
 assign_portal(reast):- current(X,Y,Z),
                         E is Y+1,
@@ -644,10 +731,7 @@ assign_portal(reast):- current(X,Y,Z),
                         assertz(confundus(X,E)).
 
 
-assign_portal(reast):- current(X,Y,Z),
-                        E is Y+1,
-                        assertz(confundus(X,E)),
-                        retract(safe(X,E)).
+
 
 
 assign_portal(reast):- current(X,Y,Z),
@@ -656,10 +740,7 @@ assign_portal(reast):- current(X,Y,Z),
                         assertz(confundus(X,F)).
 
 
-assign_portal(reast):- current(X,Y,Z),
-                        F is Y-1,
-                        assertz(confundus(X,F)),
-                        retract(safe(X,F)).
+
 
 
 assign_portal(rsouth):- current(X,Y,Z),
@@ -668,10 +749,7 @@ assign_portal(rsouth):- current(X,Y,Z),
                         assertz(confundus(X,D)).
 
 
-assign_portal(rsouth):- current(X,Y,Z),
-                        D is Y-1,
-                        assertz(confundus(X,D)),
-                        retract(safe(X,D)).
+
 
 assign_portal(rsouth):- current(X,Y,Z),
                         E is X+1,
@@ -679,10 +757,6 @@ assign_portal(rsouth):- current(X,Y,Z),
                         assertz(confundus(E,Y)).
 
 
-assign_portal(rsouth):- current(X,Y,Z),
-                        E is X+1,
-                        assertz(confundus(E,Y)),
-                        retract(safe(E,Y)).
 
 assign_portal(rsouth):- current(X,Y,Z),
                         F is X-1,
@@ -690,10 +764,7 @@ assign_portal(rsouth):- current(X,Y,Z),
                         assertz(confundus(F,Y)).
 
 
-assign_portal(rsouth):- current(X,Y,Z),
-                        F is X-1,
-                        assertz(confundus(F,Y)),
-                        retract(safe(F,Y)).
+
 
 assign_portal(rwest):- current(X,Y,Z),
                         D is X-1,
@@ -701,10 +772,7 @@ assign_portal(rwest):- current(X,Y,Z),
                         assertz(confundus(D,Y)).
 
 
-assign_portal(rwest):- current(X,Y,Z),
-                        D is X-1,
-                        assertz(confundus(D,Y)),
-                        retract(safe(D,Y)).
+
 
 assign_portal(rwest):- current(X,Y,Z),
                         E is Y+1,
@@ -712,11 +780,6 @@ assign_portal(rwest):- current(X,Y,Z),
                         assertz(confundus(X,E)).
 
 
-assign_portal(rwest):- current(X,Y,Z),
-                        E is Y+1,
-                        safe(X,E),
-                        assertz(confundus(X,E)),
-                        retract(safe(X,E)).
 
 assign_portal(rwest):- current(X,Y,Z),
                         F is Y-1,
@@ -724,11 +787,6 @@ assign_portal(rwest):- current(X,Y,Z),
                         assertz(confundus(X,F)).
 
 
-assign_portal(rwest):- current(X,Y,Z),
-                        F is Y-1,
-                        safe(X,F),
-                        assertz(confundus(X,F)),
-                        retract(safe(X,F)).
                         
 
 
@@ -785,23 +843,23 @@ assign_wall(rsouth) :- current(X,Y,Z),
 -------------------------------------------explore------------------------------------
 nextloc(0,0,rnorth).
 
-explore([H|T]) :-write(H),current(X,Y,Z), safe(X,Y),
+explore([H|T]) :-current(X,Y,Z), safe(X,Y),
                  updatenext(H,X,Y,Z),explore2(T).
 
-explore2([H|T]) :- write(H),nextloc(X,Y,Z),
+explore2([H|T]) :- nextloc(X,Y,Z),
                      updatenext(H,X,Y,Z), explore2(T).
 
 explore2([]).
 
 
 
-updatenext(forward, X, Y, rnorth) :- D is Y+1, safe(X,D),retractall(nextloc(_,_,_)), asserta(nextloc(X,D,rnorth)).
+updatenext(moveforward, X, Y, rnorth) :- D is Y+1, safe(X,D),retractall(nextloc(_,_,_)), asserta(nextloc(X,D,rnorth)).
 
-updatenext(forward, X, Y, reast) :- D is X+1, safe(D,Y),retractall(nextloc(_,_,_)), asserta(nextloc(D,Y,reast)).
+updatenext(moveforward, X, Y, reast) :- D is X+1, safe(D,Y),retractall(nextloc(_,_,_)), asserta(nextloc(D,Y,reast)).
 
-updatenext(forward, X, Y, rwest) :- D is X-1,safe(D,Y), retractall(nextloc(_,_,_)), asserta(nextloc(D,Y,rwest)).
+updatenext(moveforward, X, Y, rwest) :- D is X-1,safe(D,Y), retractall(nextloc(_,_,_)), asserta(nextloc(D,Y,rwest)).
 
-updatenext(forward, X, Y, rsouth) :- D is Y-1,safe(X,D), retractall(nextloc(_,_,_)), asserta(nextloc(X,D,rsouth)).
+updatenext(moveforward, X, Y, rsouth) :- D is Y-1,safe(X,D), retractall(nextloc(_,_,_)), asserta(nextloc(X,D,rsouth)).
 
 updatenext(turnleft, X, Y, rnorth) :-  retractall(nextloc(_,_,_)), asserta(nextloc(X,Y,rwest)).
 

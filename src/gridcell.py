@@ -41,12 +41,12 @@ class GridCell:
         symb1 = ' '
         symb2 = ' '
         symb3 = ' '
-        if self.confounded_indicator:
-            symb1 = '%'
-        if self.stench_indicator:
-            symb2 = '='
-        if self.tingle_indicator:
-            symb3 = 'T'
+        # if self.confounded_indicator:
+        #     symb1 = '%'
+        # if self.stench_indicator:
+        #     symb2 = '='
+        # if self.tingle_indicator:
+        #     symb3 = 'T'
         print(f"{symb1} {symb2} {symb3}", end='')
 
     def print_cell_l2(self):
@@ -55,7 +55,7 @@ class GridCell:
             return
 
         symb4 = symb6 = ' '
-        symb5 = '?'
+        symb5 = ' '
         if self.wumpus:
             symb5 = 'W'
             symb4 = symb6 = '-'
@@ -77,10 +77,10 @@ class GridCell:
                 symb5 = '<'
             symb4 = symb6 = '-'
         elif not self.visited and self.safe:
-            symb5 = 's'
+            symb5 = ' '
         # elif self.visited and self.safe:
         elif self.visited:
-            symb5 = 'S'
+            symb5 = ' '
         print(f"{symb4} {symb5} {symb6}", end='')
 
     def print_cell_l3(self):
@@ -90,12 +90,12 @@ class GridCell:
         symb7 = ' '
         symb8 = ' '
         symb9 = ' '
-        if self.glitter_indicator:
-            symb7 = '*'
-        if self.bump_indicator:
-            symb8 = 'B'
-        if self.scream_indicator:
-            symb9 = '@'
+        # if self.glitter_indicator:
+        #     symb7 = '*'
+        # if self.bump_indicator:
+        #     symb8 = 'B'
+        # if self.scream_indicator:
+        #     symb9 = '@'
         print(f"{symb7} {symb8} {symb9}", end='')
 
     def set_tingle(self):
